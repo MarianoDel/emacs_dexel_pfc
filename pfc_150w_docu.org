@@ -51,20 +51,13 @@
     - no por el d100w, sino que cuando el dimmer corta el ciclo comienza con errores
       de disparo en el TRIAC y ruidos extraños
 
-* Cambios Hard Version 1.0
-** ERRORES de Hard
-   - Pines alimentacion y masa en AR1 (LM358) estan mal
-   - R13 0 ohms quitar, no hace falta
-   - R29 0 ohms quitar, no hace falta
-   - R35 10 ohms quitar, no hace falta
-   - Agregar detector de corriente pico en mosfet
-   - D6 zener de 15V bajarlo a 12V
-   - Q7 debe ser BC807 y no BC857
-   - Faltan muchas y mejores MASAS, agregamos varios cables con conexion kelvin
-     en el pin6 del trafo y todo empezo a funcionar mejor
+* Avances
+** Sinusidal Signal
+   - programa que genere senial senoial para controlr pin COMP en pwm
 
-** Fuente baja tension lado salida
-   - quitar U2, no regular 5V dejar los 15V, o un poco menos, libre
+** Sensado de Vin Vout
+   - verificar tensiones vin vout para poder posteriormente realimentar
+   - realimentar 
 
 ** Fuente del uC lado entrada
    - cambiar 78L33 por algo con menos consumo interno, baja Quiescent Current
@@ -80,8 +73,15 @@
    - agregue 2k2 y 100nF en // al LED para poder conocer valores analogicos dentro
      del micro. Lo uso como salida PWM.
 
-* Mediciones 04-07-19
-** Sensado de tension VPOS
+* Mediciones 24-12-19
+** Generacion senial senoidal
+   - con pwm 3.3V desde el micro y comp compensado con preset consigo:
+     senoidal rectificada de 1.4V a 4.1V delta: 2.76V
+
+** Salida para desconexion
+   - mandar 3.3V al pwm para apagar
+
+** Sensado de tension V
 
    | VPOS  | Vup (R30) |
    |-------+-----------|

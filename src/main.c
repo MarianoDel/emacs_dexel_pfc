@@ -166,6 +166,11 @@ int main(void)
     ADC1->CR |= ADC_CR_ADSTART;
     //end of ADC & DMA
 
+#ifdef HARD_TEST_MODE_DISABLE_PWM
+    CTRL_MOSFET(DUTY_100_PERCENT);
+    while (1);
+#endif
+    
 #ifdef HARD_TEST_MODE_RECT_SINUSOIDAL
     p_signal = mem_signal;
 
@@ -194,6 +199,20 @@ int main(void)
     }
 #endif    // HARD_TEST_MODE_RECT_SINUSOIDAL
 
+#ifdef HARD_TEST_MODE_ADC_SENSE
+    //disable pwm
+    CTRL_MOSFET(DUTY_100_PERCENT);
+    
+    while (1)
+    {
+        if (sequence_ready)
+        {
+            sequence_ready_reset;
+            // CTRL_LED(Vout_Sense);
+            CTRL_LED(Vline_Sense);
+        }
+    }
+#endif
     
 #ifdef HARD_TEST_MODE_CONDUCTION_ANGLE
     Hard_Reset_Voltage_Filter();
