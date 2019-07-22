@@ -1,0 +1,2600 @@
+ARM GAS  /tmp/ccEt37Uj.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1	@ Tag_ABI_FP_denormal
+   5              		.eabi_attribute 21, 1	@ Tag_ABI_FP_exceptions
+   6              		.eabi_attribute 23, 3	@ Tag_ABI_FP_number_model
+   7              		.eabi_attribute 24, 1	@ Tag_ABI_align8_needed
+   8              		.eabi_attribute 25, 1	@ Tag_ABI_align8_preserved
+   9              		.eabi_attribute 26, 1	@ Tag_ABI_enum_size
+  10              		.eabi_attribute 30, 6	@ Tag_ABI_optimization_goals
+  11              		.eabi_attribute 34, 0	@ Tag_CPU_unaligned_access
+  12              		.eabi_attribute 18, 4	@ Tag_ABI_PCS_wchar_t
+  13              		.file	"hard.c"
+  14              	@ GNU C11 (GNU Tools for ARM Embedded Processors) version 5.2.1 20151202 (release) [ARM/embedded-5-
+  15              	@	compiled by GNU C version 4.7.4, GMP version 4.3.2, MPFR version 2.4.2, MPC version 0.8.1
+  16              	@ GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+  17              	@ options passed:  -I . -I ./src -I ./cmsis_boot -I ./cmsis_core
+  18              	@ -imultilib armv6-m
+  19              	@ -iprefix /usr/local/sbin/gcc-arm-none-eabi-5_2-2015q4/bin/../lib/gcc/arm-none-eabi/5.2.1/
+  20              	@ -isysroot /usr/local/sbin/gcc-arm-none-eabi-5_2-2015q4/bin/../arm-none-eabi
+  21              	@ -D__USES_INITFINI__ -D STM32F030 src/hard.c -mcpu=cortex-m0 -mthumb
+  22              	@ -auxbase-strip src/hard.o -g -gdwarf-2 -O0 -Wall -fomit-frame-pointer
+  23              	@ -fdata-sections -ffunction-sections -fverbose-asm
+  24              	@ options enabled:  -faggressive-loop-optimizations -fauto-inc-dec
+  25              	@ -fchkp-check-incomplete-type -fchkp-check-read -fchkp-check-write
+  26              	@ -fchkp-instrument-calls -fchkp-narrow-bounds -fchkp-optimize
+  27              	@ -fchkp-store-bounds -fchkp-use-static-bounds
+  28              	@ -fchkp-use-static-const-bounds -fchkp-use-wrappers -fcommon
+  29              	@ -fdata-sections -fdelete-null-pointer-checks -fdwarf2-cfi-asm
+  30              	@ -fearly-inlining -feliminate-unused-debug-types -ffunction-cse
+  31              	@ -ffunction-sections -fgcse-lm -fgnu-runtime -fgnu-unique -fident
+  32              	@ -finline-atomics -fira-hoist-pressure -fira-share-save-slots
+  33              	@ -fira-share-spill-slots -fivopts -fkeep-static-consts
+  34              	@ -fleading-underscore -flifetime-dse -flto-odr-type-merging -fmath-errno
+  35              	@ -fmerge-debug-strings -fomit-frame-pointer -fpeephole
+  36              	@ -fprefetch-loop-arrays -freg-struct-return
+  37              	@ -fsched-critical-path-heuristic -fsched-dep-count-heuristic
+  38              	@ -fsched-group-heuristic -fsched-interblock -fsched-last-insn-heuristic
+  39              	@ -fsched-rank-heuristic -fsched-spec -fsched-spec-insn-heuristic
+  40              	@ -fsched-stalled-insns-dep -fsemantic-interposition -fshow-column
+  41              	@ -fsigned-zeros -fsplit-ivs-in-unroller -fstdarg-opt
+  42              	@ -fstrict-volatile-bitfields -fsync-libcalls -ftrapping-math
+  43              	@ -ftree-coalesce-vars -ftree-cselim -ftree-forwprop -ftree-loop-if-convert
+  44              	@ -ftree-loop-im -ftree-loop-ivcanon -ftree-loop-optimize
+  45              	@ -ftree-parallelize-loops= -ftree-phiprop -ftree-reassoc -ftree-scev-cprop
+  46              	@ -funit-at-a-time -fverbose-asm -fzero-initialized-in-bss -mlittle-endian
+  47              	@ -mpic-data-is-text-relative -msched-prolog -mthumb
+  48              	@ -mvectorize-with-neon-quad
+  49              	
+  50              		.text
+  51              	.Ltext0:
+  52              		.cfi_sections	.debug_frame
+  53              		.global	led_state
+  54              		.section	.bss.led_state,"aw",%nobits
+  55              		.type	led_state, %object
+  56              		.size	led_state, 1
+  57              	led_state:
+ARM GAS  /tmp/ccEt37Uj.s 			page 2
+
+
+  58 0000 00       		.space	1
+  59              		.global	blink
+  60              		.section	.bss.blink,"aw",%nobits
+  61              		.type	blink, %object
+  62              		.size	blink, 1
+  63              	blink:
+  64 0000 00       		.space	1
+  65              		.global	how_many_blinks
+  66              		.section	.bss.how_many_blinks,"aw",%nobits
+  67              		.type	how_many_blinks, %object
+  68              		.size	how_many_blinks, 1
+  69              	how_many_blinks:
+  70 0000 00       		.space	1
+  71              		.global	hard_filter_index
+  72              		.section	.bss.hard_filter_index,"aw",%nobits
+  73              		.type	hard_filter_index, %object
+  74              		.size	hard_filter_index, 1
+  75              	hard_filter_index:
+  76 0000 00       		.space	1
+  77              		.global	last_voltage_was_high
+  78              		.section	.bss.last_voltage_was_high,"aw",%nobits
+  79              		.type	last_voltage_was_high, %object
+  80              		.size	last_voltage_was_high, 1
+  81              	last_voltage_was_high:
+  82 0000 00       		.space	1
+  83              		.global	integrate_voltage
+  84              		.section	.bss.integrate_voltage,"aw",%nobits
+  85              		.align	1
+  86              		.type	integrate_voltage, %object
+  87              		.size	integrate_voltage, 2
+  88              	integrate_voltage:
+  89 0000 0000     		.space	2
+  90              		.global	integrate_voltage_in_positive
+  91              		.section	.bss.integrate_voltage_in_positive,"aw",%nobits
+  92              		.align	1
+  93              		.type	integrate_voltage_in_positive, %object
+  94              		.size	integrate_voltage_in_positive, 2
+  95              	integrate_voltage_in_positive:
+  96 0000 0000     		.space	2
+  97              		.global	last_voltage_cycle
+  98              		.section	.bss.last_voltage_cycle,"aw",%nobits
+  99              		.align	1
+ 100              		.type	last_voltage_cycle, %object
+ 101              		.size	last_voltage_cycle, 2
+ 102              	last_voltage_cycle:
+ 103 0000 0000     		.space	2
+ 104              		.global	last_voltage_cycle_in_positive
+ 105              		.section	.bss.last_voltage_cycle_in_positive,"aw",%nobits
+ 106              		.align	1
+ 107              		.type	last_voltage_cycle_in_positive, %object
+ 108              		.size	last_voltage_cycle_in_positive, 2
+ 109              	last_voltage_cycle_in_positive:
+ 110 0000 0000     		.space	2
+ 111              		.global	last_voltage_peak
+ 112              		.section	.bss.last_voltage_peak,"aw",%nobits
+ 113              		.align	1
+ 114              		.type	last_voltage_peak, %object
+ARM GAS  /tmp/ccEt37Uj.s 			page 3
+
+
+ 115              		.size	last_voltage_peak, 2
+ 116              	last_voltage_peak:
+ 117 0000 0000     		.space	2
+ 118              		.global	voltage_peak
+ 119              		.section	.bss.voltage_peak,"aw",%nobits
+ 120              		.align	1
+ 121              		.type	voltage_peak, %object
+ 122              		.size	voltage_peak, 2
+ 123              	voltage_peak:
+ 124 0000 0000     		.space	2
+ 125              		.section	.text.ChangeLed,"ax",%progbits
+ 126              		.align	2
+ 127              		.global	ChangeLed
+ 128              		.code	16
+ 129              		.thumb_func
+ 130              		.type	ChangeLed, %function
+ 131              	ChangeLed:
+ 132              	.LFB20:
+ 133              		.file 1 "src/hard.c"
+   1:src/hard.c    **** //---------------------------------------------
+   2:src/hard.c    **** // ##
+   3:src/hard.c    **** // ## @Author: Med
+   4:src/hard.c    **** // ## @Editor: Emacs - ggtags
+   5:src/hard.c    **** // ## @TAGS:   Global
+   6:src/hard.c    **** // ## @CPU:    STM32F030
+   7:src/hard.c    **** // ##
+   8:src/hard.c    **** // #### HARD.C ################################
+   9:src/hard.c    **** //---------------------------------------------
+  10:src/hard.c    **** 
+  11:src/hard.c    **** /* Includes ------------------------------------------------------------------*/
+  12:src/hard.c    **** #include "hard.h"
+  13:src/hard.c    **** #include "tim.h"
+  14:src/hard.c    **** #include "stm32f0xx.h"
+  15:src/hard.c    **** #include "adc.h"
+  16:src/hard.c    **** #include "dsp.h"
+  17:src/hard.c    **** 
+  18:src/hard.c    **** #include <stdio.h>
+  19:src/hard.c    **** #include "uart.h"
+  20:src/hard.c    **** 
+  21:src/hard.c    **** /* Externals variables ---------------------------------------------------------*/
+  22:src/hard.c    **** extern volatile unsigned short timer_led;
+  23:src/hard.c    **** extern volatile unsigned short adc_ch[];
+  24:src/hard.c    **** 
+  25:src/hard.c    **** 
+  26:src/hard.c    **** 
+  27:src/hard.c    **** 
+  28:src/hard.c    **** /* Global variables ------------------------------------------------------------*/
+  29:src/hard.c    **** //para el led
+  30:src/hard.c    **** led_state_t led_state = START_BLINKING;
+  31:src/hard.c    **** unsigned char blink = 0;
+  32:src/hard.c    **** unsigned char how_many_blinks = 0;
+  33:src/hard.c    **** //para los filtros de tension y snchro
+  34:src/hard.c    **** unsigned char hard_filter_index = 0;
+  35:src/hard.c    **** unsigned char last_voltage_was_high = 0;
+  36:src/hard.c    **** unsigned short integrate_voltage = 0;
+  37:src/hard.c    **** unsigned short integrate_voltage_in_positive = 0;
+  38:src/hard.c    **** unsigned short last_voltage_cycle = 0;
+ARM GAS  /tmp/ccEt37Uj.s 			page 4
+
+
+  39:src/hard.c    **** unsigned short last_voltage_cycle_in_positive = 0;
+  40:src/hard.c    **** unsigned short last_voltage_peak = 0;
+  41:src/hard.c    **** unsigned short voltage_peak = 0;
+  42:src/hard.c    **** 
+  43:src/hard.c    **** #define STRING2(x) #x
+  44:src/hard.c    **** #define STRING(x) STRING2(x)
+  45:src/hard.c    **** // #define STRING_CONCAT(str1,str2) #str1 " " #str2
+  46:src/hard.c    **** // #pragma message "Corriente para calculos"
+  47:src/hard.c    **** // #pragma message(STRING_CONCAT("Corriente para calculos",I_FOR_CALC))
+  48:src/hard.c    **** // #pragma message(STRING_CONCAT("Corriente para calculos",STRING(I_FOR_CALC)))
+  49:src/hard.c    **** #pragma message(STRING(I_FOR_CALC))
+  50:src/hard.c    **** 
+  51:src/hard.c    **** /* Module Functions ------------------------------------------------------------*/
+  52:src/hard.c    **** 
+  53:src/hard.c    **** 
+  54:src/hard.c    **** //cambia configuracion de bips del LED
+  55:src/hard.c    **** void ChangeLed (unsigned char how_many)
+  56:src/hard.c    **** {
+ 134              		.loc 1 56 0
+ 135              		.cfi_startproc
+ 136 0000 82B0     		sub	sp, sp, #8	@,,
+ 137              	.LCFI0:
+ 138              		.cfi_def_cfa_offset 8
+ 139 0002 0200     		movs	r2, r0	@ tmp110, how_many
+ 140 0004 6B46     		mov	r3, sp	@ tmp119,
+ 141 0006 0733     		adds	r3, r3, #7	@ tmp111,
+ 142 0008 1A70     		strb	r2, [r3]	@ tmp112, how_many
+  57:src/hard.c    ****     how_many_blinks = how_many;
+ 143              		.loc 1 57 0
+ 144 000a 054B     		ldr	r3, .L2	@ tmp113,
+ 145 000c 6A46     		mov	r2, sp	@ tmp120,
+ 146 000e 0732     		adds	r2, r2, #7	@ tmp114,
+ 147 0010 1278     		ldrb	r2, [r2]	@ tmp115, how_many
+ 148 0012 1A70     		strb	r2, [r3]	@ tmp115, how_many_blinks
+  58:src/hard.c    ****     led_state = START_BLINKING;
+ 149              		.loc 1 58 0
+ 150 0014 034B     		ldr	r3, .L2+4	@ tmp116,
+ 151 0016 0022     		movs	r2, #0	@ tmp117,
+ 152 0018 1A70     		strb	r2, [r3]	@ tmp118, led_state
+  59:src/hard.c    **** }
+ 153              		.loc 1 59 0
+ 154 001a C046     		nop
+ 155 001c 02B0     		add	sp, sp, #8	@,,
+ 156              		@ sp needed	@
+ 157 001e 7047     		bx	lr
+ 158              	.L3:
+ 159              		.align	2
+ 160              	.L2:
+ 161 0020 00000000 		.word	how_many_blinks
+ 162 0024 00000000 		.word	led_state
+ 163              		.cfi_endproc
+ 164              	.LFE20:
+ 165              		.size	ChangeLed, .-ChangeLed
+ 166              		.section	.text.UpdateLed,"ax",%progbits
+ 167              		.align	2
+ 168              		.global	UpdateLed
+ 169              		.code	16
+ARM GAS  /tmp/ccEt37Uj.s 			page 5
+
+
+ 170              		.thumb_func
+ 171              		.type	UpdateLed, %function
+ 172              	UpdateLed:
+ 173              	.LFB21:
+  60:src/hard.c    **** 
+  61:src/hard.c    **** //mueve el LED segun el estado del Pote
+  62:src/hard.c    **** void UpdateLed (void)
+  63:src/hard.c    **** {
+ 174              		.loc 1 63 0
+ 175              		.cfi_startproc
+  64:src/hard.c    ****     switch (led_state)
+ 176              		.loc 1 64 0
+ 177 0000 3B4B     		ldr	r3, .L21	@ tmp129,
+ 178 0002 1B78     		ldrb	r3, [r3]	@ D.5993, led_state
+ 179 0004 012B     		cmp	r3, #1	@ D.5994,
+ 180 0006 25D0     		beq	.L6	@,
+ 181 0008 02DC     		bgt	.L7	@,
+ 182 000a 002B     		cmp	r3, #0	@ D.5994,
+ 183 000c 05D0     		beq	.L8	@,
+ 184 000e 61E0     		b	.L5	@
+ 185              	.L7:
+ 186 0010 022B     		cmp	r3, #2	@ D.5994,
+ 187 0012 33D0     		beq	.L9	@,
+ 188 0014 032B     		cmp	r3, #3	@ D.5994,
+ 189 0016 54D0     		beq	.L10	@,
+ 190 0018 5CE0     		b	.L5	@
+ 191              	.L8:
+  65:src/hard.c    ****     {
+  66:src/hard.c    ****         case START_BLINKING:
+  67:src/hard.c    ****             blink = how_many_blinks;
+ 192              		.loc 1 67 0
+ 193 001a 364B     		ldr	r3, .L21+4	@ tmp130,
+ 194 001c 1A78     		ldrb	r2, [r3]	@ D.5995, how_many_blinks
+ 195 001e 364B     		ldr	r3, .L21+8	@ tmp131,
+ 196 0020 1A70     		strb	r2, [r3]	@ tmp132, blink
+  68:src/hard.c    ****             
+  69:src/hard.c    ****             if (blink)
+ 197              		.loc 1 69 0
+ 198 0022 354B     		ldr	r3, .L21+8	@ tmp133,
+ 199 0024 1B78     		ldrb	r3, [r3]	@ D.5995, blink
+ 200 0026 002B     		cmp	r3, #0	@ D.5995,
+ 201 0028 58D0     		beq	.L17	@,
+  70:src/hard.c    ****             {
+  71:src/hard.c    ****                 LED_ON;
+ 202              		.loc 1 71 0
+ 203 002a 9023     		movs	r3, #144	@ tmp189,
+ 204 002c DB05     		lsls	r3, r3, #23	@ D.5996, tmp189,
+ 205 002e 8022     		movs	r2, #128	@ tmp190,
+ 206 0030 D200     		lsls	r2, r2, #3	@ tmp134, tmp190,
+ 207 0032 9A61     		str	r2, [r3, #24]	@ tmp134, _12->BSRR
+  72:src/hard.c    ****                 timer_led = 200;
+ 208              		.loc 1 72 0
+ 209 0034 314B     		ldr	r3, .L21+12	@ tmp135,
+ 210 0036 C822     		movs	r2, #200	@ tmp136,
+ 211 0038 1A80     		strh	r2, [r3]	@ tmp137, timer_led
+  73:src/hard.c    ****                 led_state++;
+ 212              		.loc 1 73 0
+ARM GAS  /tmp/ccEt37Uj.s 			page 6
+
+
+ 213 003a 2D4B     		ldr	r3, .L21	@ tmp138,
+ 214 003c 1B78     		ldrb	r3, [r3]	@ D.5993, led_state
+ 215 003e 0133     		adds	r3, r3, #1	@ tmp139,
+ 216 0040 DAB2     		uxtb	r2, r3	@ D.5993, tmp139
+ 217 0042 2B4B     		ldr	r3, .L21	@ tmp140,
+ 218 0044 1A70     		strb	r2, [r3]	@ tmp141, led_state
+  74:src/hard.c    ****                 blink--;
+ 219              		.loc 1 74 0
+ 220 0046 2C4B     		ldr	r3, .L21+8	@ tmp142,
+ 221 0048 1B78     		ldrb	r3, [r3]	@ D.5995, blink
+ 222 004a 013B     		subs	r3, r3, #1	@ tmp143,
+ 223 004c DAB2     		uxtb	r2, r3	@ D.5995, tmp143
+ 224 004e 2A4B     		ldr	r3, .L21+8	@ tmp144,
+ 225 0050 1A70     		strb	r2, [r3]	@ tmp145, blink
+  75:src/hard.c    ****             }
+  76:src/hard.c    ****             break;
+ 226              		.loc 1 76 0
+ 227 0052 43E0     		b	.L17	@
+ 228              	.L6:
+  77:src/hard.c    **** 
+  78:src/hard.c    ****         case WAIT_TO_OFF:
+  79:src/hard.c    ****             if (!timer_led)
+ 229              		.loc 1 79 0
+ 230 0054 294B     		ldr	r3, .L21+12	@ tmp146,
+ 231 0056 1B88     		ldrh	r3, [r3]	@ tmp147, timer_led
+ 232 0058 9BB2     		uxth	r3, r3	@ D.5997, tmp147
+ 233 005a 002B     		cmp	r3, #0	@ D.5997,
+ 234 005c 40D1     		bne	.L18	@,
+  80:src/hard.c    ****             {
+  81:src/hard.c    ****                 LED_OFF;
+ 235              		.loc 1 81 0
+ 236 005e 9023     		movs	r3, #144	@ tmp187,
+ 237 0060 DB05     		lsls	r3, r3, #23	@ D.5996, tmp187,
+ 238 0062 8022     		movs	r2, #128	@ tmp188,
+ 239 0064 D204     		lsls	r2, r2, #19	@ tmp148, tmp188,
+ 240 0066 9A61     		str	r2, [r3, #24]	@ tmp148, _24->BSRR
+  82:src/hard.c    ****                 timer_led = 200;
+ 241              		.loc 1 82 0
+ 242 0068 244B     		ldr	r3, .L21+12	@ tmp149,
+ 243 006a C822     		movs	r2, #200	@ tmp150,
+ 244 006c 1A80     		strh	r2, [r3]	@ tmp151, timer_led
+  83:src/hard.c    ****                 led_state++;
+ 245              		.loc 1 83 0
+ 246 006e 204B     		ldr	r3, .L21	@ tmp152,
+ 247 0070 1B78     		ldrb	r3, [r3]	@ D.5993, led_state
+ 248 0072 0133     		adds	r3, r3, #1	@ tmp153,
+ 249 0074 DAB2     		uxtb	r2, r3	@ D.5993, tmp153
+ 250 0076 1E4B     		ldr	r3, .L21	@ tmp154,
+ 251 0078 1A70     		strb	r2, [r3]	@ tmp155, led_state
+  84:src/hard.c    ****             }
+  85:src/hard.c    ****             break;
+ 252              		.loc 1 85 0
+ 253 007a 31E0     		b	.L18	@
+ 254              	.L9:
+  86:src/hard.c    **** 
+  87:src/hard.c    ****         case WAIT_TO_ON:
+  88:src/hard.c    ****             if (!timer_led)
+ARM GAS  /tmp/ccEt37Uj.s 			page 7
+
+
+ 255              		.loc 1 88 0
+ 256 007c 1F4B     		ldr	r3, .L21+12	@ tmp156,
+ 257 007e 1B88     		ldrh	r3, [r3]	@ tmp157, timer_led
+ 258 0080 9BB2     		uxth	r3, r3	@ D.5997, tmp157
+ 259 0082 002B     		cmp	r3, #0	@ D.5997,
+ 260 0084 2ED1     		bne	.L19	@,
+  89:src/hard.c    ****             {
+  90:src/hard.c    ****                 if (blink)
+ 261              		.loc 1 90 0
+ 262 0086 1C4B     		ldr	r3, .L21+8	@ tmp158,
+ 263 0088 1B78     		ldrb	r3, [r3]	@ D.5995, blink
+ 264 008a 002B     		cmp	r3, #0	@ D.5995,
+ 265 008c 11D0     		beq	.L15	@,
+  91:src/hard.c    ****                 {
+  92:src/hard.c    ****                     blink--;
+ 266              		.loc 1 92 0
+ 267 008e 1A4B     		ldr	r3, .L21+8	@ tmp159,
+ 268 0090 1B78     		ldrb	r3, [r3]	@ D.5995, blink
+ 269 0092 013B     		subs	r3, r3, #1	@ tmp160,
+ 270 0094 DAB2     		uxtb	r2, r3	@ D.5995, tmp160
+ 271 0096 184B     		ldr	r3, .L21+8	@ tmp161,
+ 272 0098 1A70     		strb	r2, [r3]	@ tmp162, blink
+  93:src/hard.c    ****                     timer_led = 200;
+ 273              		.loc 1 93 0
+ 274 009a 184B     		ldr	r3, .L21+12	@ tmp163,
+ 275 009c C822     		movs	r2, #200	@ tmp164,
+ 276 009e 1A80     		strh	r2, [r3]	@ tmp165, timer_led
+  94:src/hard.c    ****                     led_state = WAIT_TO_OFF;
+ 277              		.loc 1 94 0
+ 278 00a0 134B     		ldr	r3, .L21	@ tmp166,
+ 279 00a2 0122     		movs	r2, #1	@ tmp167,
+ 280 00a4 1A70     		strb	r2, [r3]	@ tmp168, led_state
+  95:src/hard.c    ****                     LED_ON;
+ 281              		.loc 1 95 0
+ 282 00a6 9023     		movs	r3, #144	@ tmp185,
+ 283 00a8 DB05     		lsls	r3, r3, #23	@ D.5996, tmp185,
+ 284 00aa 8022     		movs	r2, #128	@ tmp186,
+ 285 00ac D200     		lsls	r2, r2, #3	@ tmp169, tmp186,
+ 286 00ae 9A61     		str	r2, [r3, #24]	@ tmp169, _39->BSRR
+  96:src/hard.c    ****                 }
+  97:src/hard.c    ****                 else
+  98:src/hard.c    ****                 {
+  99:src/hard.c    ****                     led_state = WAIT_NEW_CYCLE;
+ 100:src/hard.c    ****                     timer_led = 2000;
+ 101:src/hard.c    ****                 }
+ 102:src/hard.c    ****             }
+ 103:src/hard.c    ****             break;
+ 287              		.loc 1 103 0
+ 288 00b0 18E0     		b	.L19	@
+ 289              	.L15:
+  99:src/hard.c    ****                     timer_led = 2000;
+ 290              		.loc 1 99 0
+ 291 00b2 0F4B     		ldr	r3, .L21	@ tmp170,
+ 292 00b4 0322     		movs	r2, #3	@ tmp171,
+ 293 00b6 1A70     		strb	r2, [r3]	@ tmp172, led_state
+ 100:src/hard.c    ****                 }
+ 294              		.loc 1 100 0
+ARM GAS  /tmp/ccEt37Uj.s 			page 8
+
+
+ 295 00b8 104B     		ldr	r3, .L21+12	@ tmp173,
+ 296 00ba FA22     		movs	r2, #250	@ tmp184,
+ 297 00bc D200     		lsls	r2, r2, #3	@ tmp174, tmp184,
+ 298 00be 1A80     		strh	r2, [r3]	@ tmp175, timer_led
+ 299              		.loc 1 103 0
+ 300 00c0 10E0     		b	.L19	@
+ 301              	.L10:
+ 104:src/hard.c    **** 
+ 105:src/hard.c    ****         case WAIT_NEW_CYCLE:
+ 106:src/hard.c    ****             if (!timer_led)
+ 302              		.loc 1 106 0
+ 303 00c2 0E4B     		ldr	r3, .L21+12	@ tmp176,
+ 304 00c4 1B88     		ldrh	r3, [r3]	@ tmp177, timer_led
+ 305 00c6 9BB2     		uxth	r3, r3	@ D.5997, tmp177
+ 306 00c8 002B     		cmp	r3, #0	@ D.5997,
+ 307 00ca 0DD1     		bne	.L20	@,
+ 107:src/hard.c    ****                 led_state = START_BLINKING;
+ 308              		.loc 1 107 0
+ 309 00cc 084B     		ldr	r3, .L21	@ tmp178,
+ 310 00ce 0022     		movs	r2, #0	@ tmp179,
+ 311 00d0 1A70     		strb	r2, [r3]	@ tmp180, led_state
+ 108:src/hard.c    **** 
+ 109:src/hard.c    ****             break;
+ 312              		.loc 1 109 0
+ 313 00d2 09E0     		b	.L20	@
+ 314              	.L5:
+ 110:src/hard.c    **** 
+ 111:src/hard.c    ****         default:
+ 112:src/hard.c    ****             led_state = START_BLINKING;
+ 315              		.loc 1 112 0
+ 316 00d4 064B     		ldr	r3, .L21	@ tmp181,
+ 317 00d6 0022     		movs	r2, #0	@ tmp182,
+ 318 00d8 1A70     		strb	r2, [r3]	@ tmp183, led_state
+ 113:src/hard.c    ****             break;
+ 319              		.loc 1 113 0
+ 320 00da 06E0     		b	.L12	@
+ 321              	.L17:
+  76:src/hard.c    **** 
+ 322              		.loc 1 76 0
+ 323 00dc C046     		nop
+ 324 00de 04E0     		b	.L12	@
+ 325              	.L18:
+  85:src/hard.c    **** 
+ 326              		.loc 1 85 0
+ 327 00e0 C046     		nop
+ 328 00e2 02E0     		b	.L12	@
+ 329              	.L19:
+ 103:src/hard.c    **** 
+ 330              		.loc 1 103 0
+ 331 00e4 C046     		nop
+ 332 00e6 00E0     		b	.L12	@
+ 333              	.L20:
+ 109:src/hard.c    **** 
+ 334              		.loc 1 109 0
+ 335 00e8 C046     		nop
+ 336              	.L12:
+ 114:src/hard.c    ****     }
+ARM GAS  /tmp/ccEt37Uj.s 			page 9
+
+
+ 115:src/hard.c    **** }
+ 337              		.loc 1 115 0
+ 338 00ea C046     		nop
+ 339              		@ sp needed	@
+ 340 00ec 7047     		bx	lr
+ 341              	.L22:
+ 342 00ee C046     		.align	2
+ 343              	.L21:
+ 344 00f0 00000000 		.word	led_state
+ 345 00f4 00000000 		.word	how_many_blinks
+ 346 00f8 00000000 		.word	blink
+ 347 00fc 00000000 		.word	timer_led
+ 348              		.cfi_endproc
+ 349              	.LFE21:
+ 350              		.size	UpdateLed, .-UpdateLed
+ 351              		.section	.rodata
+ 352              		.align	2
+ 353              	.LC6:
+ 354 0000 5553455F 		.ascii	"USE_FREQ_48KHZ\000"
+ 354      46524551 
+ 354      5F34384B 
+ 354      485A00
+ 355 000f 00       		.align	2
+ 356              	.LC8:
+ 357 0010 7372632F 		.ascii	"src/hard.c\000"
+ 357      68617264 
+ 357      2E6300
+ 358 001b 00       		.align	2
+ 359              	.LC10:
+ 360 001c 5B25735D 		.ascii	"[%s] %s\012\000"
+ 360      2025730A 
+ 360      00
+ 361              		.section	.text.WelcomeCodeFeatures,"ax",%progbits
+ 362              		.align	2
+ 363              		.global	WelcomeCodeFeatures
+ 364              		.code	16
+ 365              		.thumb_func
+ 366              		.type	WelcomeCodeFeatures, %function
+ 367              	WelcomeCodeFeatures:
+ 368              	.LFB22:
+ 116:src/hard.c    **** 
+ 117:src/hard.c    **** //proteccion para no superar el valor Vin . Ton que puede saturar al trafo
+ 118:src/hard.c    **** //con 6T primario
+ 119:src/hard.c    **** // unsigned short UpdateDMAX (unsigned short a)
+ 120:src/hard.c    **** // {
+ 121:src/hard.c    **** //     if (a > VIN_35V)
+ 122:src/hard.c    **** //         a = 260;
+ 123:src/hard.c    **** //     else if (a > VIN_30V)
+ 124:src/hard.c    **** //         a = 297;
+ 125:src/hard.c    **** //     else if (a > VIN_25V)
+ 126:src/hard.c    **** //         a = 347;
+ 127:src/hard.c    **** //     else if (a > VIN_20V)
+ 128:src/hard.c    **** //         a = 417;
+ 129:src/hard.c    **** //     else
+ 130:src/hard.c    **** //         a = 450;
+ 131:src/hard.c    ****     
+ 132:src/hard.c    **** //     return a;
+ARM GAS  /tmp/ccEt37Uj.s 			page 10
+
+
+ 133:src/hard.c    **** // }
+ 134:src/hard.c    **** 
+ 135:src/hard.c    **** // unsigned short UpdateDMAXSF (unsigned short a)
+ 136:src/hard.c    **** // {
+ 137:src/hard.c    **** //     //por saturacion en arranque cambio max D
+ 138:src/hard.c    **** //     if (a > VIN_35V)
+ 139:src/hard.c    **** //         a = 50;
+ 140:src/hard.c    **** //     else if (a > VIN_30V)
+ 141:src/hard.c    **** //         a = 70;
+ 142:src/hard.c    **** //     else if (a > VIN_25V)
+ 143:src/hard.c    **** //         a = 90;
+ 144:src/hard.c    **** //     else if (a > VIN_20V)
+ 145:src/hard.c    **** //         a = 120;
+ 146:src/hard.c    **** //     else
+ 147:src/hard.c    **** //         a = 150;
+ 148:src/hard.c    **** 
+ 149:src/hard.c    **** //     return a;
+ 150:src/hard.c    **** // }
+ 151:src/hard.c    **** 
+ 152:src/hard.c    **** //Calcula en funcion de la tension aplicada a la bobina Lout
+ 153:src/hard.c    **** //el maxido d en ticks posible. Utiliza Imax (entrada o salida), Lout, tick_pwm
+ 154:src/hard.c    **** // unsigned short UpdateDmaxLout (unsigned short delta_voltage)
+ 155:src/hard.c    **** // {
+ 156:src/hard.c    **** //     unsigned int num, den;
+ 157:src/hard.c    **** 
+ 158:src/hard.c    **** //     if (delta_voltage > 0)
+ 159:src/hard.c    **** //     {
+ 160:src/hard.c    **** //         // num = I_FOR_CALC * LOUT_UHY * 1000;    //cambio para no tener decimales en el preproc
+ 161:src/hard.c    **** //         num =  (ILOUT * 1000) * LOUT_UHY;
+ 162:src/hard.c    **** //         // num = I_FOR_CALC_MILLIS * LOUT_UHY;    
+ 163:src/hard.c    **** //         den = delta_voltage * TICK_PWM_NS;
+ 164:src/hard.c    **** //         num = num / den;
+ 165:src/hard.c    **** 
+ 166:src/hard.c    **** //         if (num > DMAX_HARDWARE)
+ 167:src/hard.c    **** //             num = DMAX_HARDWARE;
+ 168:src/hard.c    **** //     }
+ 169:src/hard.c    **** //     else
+ 170:src/hard.c    **** //         num = DMAX_HARDWARE;
+ 171:src/hard.c    **** 
+ 172:src/hard.c    **** //     return (unsigned short) num;
+ 173:src/hard.c    **** // }
+ 174:src/hard.c    **** 
+ 175:src/hard.c    **** //Convierte el valor de ticks ADC Vout a tension
+ 176:src/hard.c    **** // unsigned short VoutTicksToVoltage (unsigned short sample_adc)
+ 177:src/hard.c    **** // {
+ 178:src/hard.c    **** //     unsigned int num;
+ 179:src/hard.c    **** 
+ 180:src/hard.c    **** //     if (sample_adc > VOUT_300V)
+ 181:src/hard.c    **** //     {
+ 182:src/hard.c    **** //         num = sample_adc * 350;
+ 183:src/hard.c    **** //         num = num / VOUT_350V;
+ 184:src/hard.c    **** //     }
+ 185:src/hard.c    **** //     else if (sample_adc > VOUT_200V)
+ 186:src/hard.c    **** //     {
+ 187:src/hard.c    **** //         num = sample_adc * 300;
+ 188:src/hard.c    **** //         num = num / VOUT_300V;
+ 189:src/hard.c    **** //     }
+ARM GAS  /tmp/ccEt37Uj.s 			page 11
+
+
+ 190:src/hard.c    **** //     else if (sample_adc > VOUT_110V)
+ 191:src/hard.c    **** //     {
+ 192:src/hard.c    **** //         num = sample_adc * 200;
+ 193:src/hard.c    **** //         num = num / VOUT_200V;
+ 194:src/hard.c    **** //     }
+ 195:src/hard.c    **** //     else
+ 196:src/hard.c    **** //     {
+ 197:src/hard.c    **** //         num = sample_adc * 110;
+ 198:src/hard.c    **** //         num = num / VOUT_110V;
+ 199:src/hard.c    **** //     }
+ 200:src/hard.c    ****     
+ 201:src/hard.c    **** //     return (unsigned short) num;
+ 202:src/hard.c    **** // }
+ 203:src/hard.c    **** 
+ 204:src/hard.c    **** //Convierte el valor de ticks ADC Vin a tension
+ 205:src/hard.c    **** // unsigned short VinTicksToVoltage (unsigned short sample_adc)
+ 206:src/hard.c    **** // {
+ 207:src/hard.c    **** //     unsigned int num;
+ 208:src/hard.c    **** 
+ 209:src/hard.c    **** //     if (sample_adc > VIN_30V)
+ 210:src/hard.c    **** //     {
+ 211:src/hard.c    **** //         num = sample_adc * 35;
+ 212:src/hard.c    **** //         num = num / VIN_35V;
+ 213:src/hard.c    **** //     }
+ 214:src/hard.c    **** //     else if (sample_adc > VIN_25V)
+ 215:src/hard.c    **** //     {
+ 216:src/hard.c    **** //         num = sample_adc * 30;
+ 217:src/hard.c    **** //         num = num / VIN_30V;
+ 218:src/hard.c    **** //     }
+ 219:src/hard.c    **** //     else if (sample_adc > VIN_20V)
+ 220:src/hard.c    **** //     {
+ 221:src/hard.c    **** //         num = sample_adc * 25;
+ 222:src/hard.c    **** //         num = num / VIN_25V;
+ 223:src/hard.c    **** //     }    
+ 224:src/hard.c    **** //     else
+ 225:src/hard.c    **** //     {
+ 226:src/hard.c    **** //         num = sample_adc * 20;
+ 227:src/hard.c    **** //         num = num / VIN_20V;
+ 228:src/hard.c    **** //     }
+ 229:src/hard.c    ****     
+ 230:src/hard.c    **** //     return (unsigned short) num;
+ 231:src/hard.c    **** // }
+ 232:src/hard.c    **** 
+ 233:src/hard.c    **** 
+ 234:src/hard.c    **** //Con la tension de entrada y salida calcula el maximo periodo permitido
+ 235:src/hard.c    **** // unsigned short Hard_GetDmaxLout (unsigned short vin, unsigned short vout)
+ 236:src/hard.c    **** // {
+ 237:src/hard.c    **** //     unsigned int delta_vout = 0;
+ 238:src/hard.c    **** //     unsigned short normalized_vout = 0;
+ 239:src/hard.c    **** 
+ 240:src/hard.c    **** //     delta_vout = VinTicksToVoltage(vin);
+ 241:src/hard.c    **** //     delta_vout = (delta_vout * N_TRAFO) / 1000;
+ 242:src/hard.c    **** 
+ 243:src/hard.c    **** //     normalized_vout = VoutTicksToVoltage(vout);
+ 244:src/hard.c    ****     
+ 245:src/hard.c    **** //     if (delta_vout > normalized_vout)
+ 246:src/hard.c    **** //         delta_vout = delta_vout - normalized_vout;
+ARM GAS  /tmp/ccEt37Uj.s 			page 12
+
+
+ 247:src/hard.c    **** //     else
+ 248:src/hard.c    **** //         delta_vout = 0;
+ 249:src/hard.c    ****     
+ 250:src/hard.c    **** //     return UpdateDmaxLout((unsigned short)delta_vout);
+ 251:src/hard.c    **** // }
+ 252:src/hard.c    **** 
+ 253:src/hard.c    **** void WelcomeCodeFeatures (char * str)
+ 254:src/hard.c    **** {
+ 369              		.loc 1 254 0
+ 370              		.cfi_startproc
+ 371 0000 00B5     		push	{lr}	@
+ 372              	.LCFI1:
+ 373              		.cfi_def_cfa_offset 4
+ 374              		.cfi_offset 14, -4
+ 375 0002 83B0     		sub	sp, sp, #12	@,,
+ 376              	.LCFI2:
+ 377              		.cfi_def_cfa_offset 16
+ 378 0004 0190     		str	r0, [sp, #4]	@ str, str
+ 255:src/hard.c    ****     // Main Program Type
+ 256:src/hard.c    **** #if (defined INVERTER_MODE_PURE_SINUSOIDAL)
+ 257:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(INVERTER_MODE_PURE_SINUSOIDAL));
+ 258:src/hard.c    ****     Usart1Send(str);
+ 259:src/hard.c    ****     Wait_ms(30);        
+ 260:src/hard.c    **** #elif defined INVERTER_MODE
+ 261:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(INVERTER_MODE));    
+ 262:src/hard.c    ****     Usart1Send(str);
+ 263:src/hard.c    ****     Wait_ms(30);    
+ 264:src/hard.c    **** #endif
+ 265:src/hard.c    **** 
+ 266:src/hard.c    **** #ifdef INVERTER_MODE_CURRENT_FDBK
+ 267:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(INVERTER_MODE_CURRENT_FDBK));
+ 268:src/hard.c    ****     Usart1Send(str);
+ 269:src/hard.c    ****     Wait_ms(30);    
+ 270:src/hard.c    **** #endif
+ 271:src/hard.c    **** 
+ 272:src/hard.c    **** #ifdef INVERTER_MODE_GRID_TIE
+ 273:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(INVERTER_MODE_GRID_TIE));
+ 274:src/hard.c    ****     Usart1Send(str);
+ 275:src/hard.c    ****     Wait_ms(30);    
+ 276:src/hard.c    **** #endif
+ 277:src/hard.c    **** 
+ 278:src/hard.c    **** #ifdef INVERTER_ONLY_SYNC_AND_POLARITY
+ 279:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(INVERTER_ONLY_SYNC_AND_POLARITY));
+ 280:src/hard.c    ****     Usart1Send(str);
+ 281:src/hard.c    ****     Wait_ms(30);    
+ 282:src/hard.c    **** #endif
+ 283:src/hard.c    ****     
+ 284:src/hard.c    ****     // Features mostly on hardware
+ 285:src/hard.c    **** #ifdef USE_FREQ_48KHZ
+ 286:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(USE_FREQ_48KHZ));
+ 379              		.loc 1 286 0
+ 380 0006 084B     		ldr	r3, .L24	@ tmp110,
+ 381 0008 084A     		ldr	r2, .L24+4	@ tmp111,
+ 382 000a 0949     		ldr	r1, .L24+8	@ tmp112,
+ 383 000c 0198     		ldr	r0, [sp, #4]	@ tmp113, str
+ 384 000e FFF7FEFF 		bl	sprintf	@
+ 287:src/hard.c    ****     Usart1Send(str);
+ARM GAS  /tmp/ccEt37Uj.s 			page 13
+
+
+ 385              		.loc 1 287 0
+ 386 0012 019B     		ldr	r3, [sp, #4]	@ tmp114, str
+ 387 0014 1800     		movs	r0, r3	@, tmp114
+ 388 0016 FFF7FEFF 		bl	Usart1Send	@
+ 288:src/hard.c    ****     Wait_ms(30);    
+ 389              		.loc 1 288 0
+ 390 001a 1E20     		movs	r0, #30	@,
+ 391 001c FFF7FEFF 		bl	Wait_ms	@
+ 289:src/hard.c    **** #endif
+ 290:src/hard.c    **** #ifdef USE_FREQ_24KHZ
+ 291:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(USE_FREQ_24KHZ));
+ 292:src/hard.c    ****     Usart1Send(str);
+ 293:src/hard.c    ****     Wait_ms(30);    
+ 294:src/hard.c    **** #endif
+ 295:src/hard.c    **** #ifdef USE_FREQ_16KHZ
+ 296:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(USE_FREQ_16KHZ));
+ 297:src/hard.c    ****     Usart1Send(str);
+ 298:src/hard.c    ****     Wait_ms(30);    
+ 299:src/hard.c    **** #endif
+ 300:src/hard.c    **** #ifdef USE_FREQ_12KHZ
+ 301:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(USE_FREQ_12KHZ));
+ 302:src/hard.c    ****     Usart1Send(str);
+ 303:src/hard.c    ****     Wait_ms(30);    
+ 304:src/hard.c    **** #endif
+ 305:src/hard.c    **** #ifdef USE_FREQ_9_6KHZ
+ 306:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(USE_FREQ_9_6KHZ));
+ 307:src/hard.c    ****     Usart1Send(str);
+ 308:src/hard.c    ****     Wait_ms(30);    
+ 309:src/hard.c    **** #endif
+ 310:src/hard.c    **** 
+ 311:src/hard.c    **** #ifdef WITH_AC_SYNC_INT
+ 312:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(WITH_AC_SYNC_INT));
+ 313:src/hard.c    ****     Usart1Send(str);
+ 314:src/hard.c    ****     Wait_ms(30);    
+ 315:src/hard.c    **** #endif
+ 316:src/hard.c    **** #ifdef WITH_OVERCURRENT_SHUTDOWN
+ 317:src/hard.c    ****     sprintf(str,"[%s] %s\n", __FILE__, str_macro(WITH_OVERCURRENT_SHUTDOWN));
+ 318:src/hard.c    ****     Usart1Send(str);
+ 319:src/hard.c    ****     Wait_ms(30);    
+ 320:src/hard.c    **** #endif
+ 321:src/hard.c    ****     
+ 322:src/hard.c    **** }
+ 392              		.loc 1 322 0
+ 393 0020 C046     		nop
+ 394 0022 03B0     		add	sp, sp, #12	@,,
+ 395              		@ sp needed	@
+ 396 0024 00BD     		pop	{pc}
+ 397              	.L25:
+ 398 0026 C046     		.align	2
+ 399              	.L24:
+ 400 0028 00000000 		.word	.LC6
+ 401 002c 10000000 		.word	.LC8
+ 402 0030 1C000000 		.word	.LC10
+ 403              		.cfi_endproc
+ 404              	.LFE22:
+ 405              		.size	WelcomeCodeFeatures, .-WelcomeCodeFeatures
+ 406              		.section	.text.Hard_Reset_Voltage_Filter,"ax",%progbits
+ARM GAS  /tmp/ccEt37Uj.s 			page 14
+
+
+ 407              		.align	2
+ 408              		.global	Hard_Reset_Voltage_Filter
+ 409              		.code	16
+ 410              		.thumb_func
+ 411              		.type	Hard_Reset_Voltage_Filter, %function
+ 412              	Hard_Reset_Voltage_Filter:
+ 413              	.LFB23:
+ 323:src/hard.c    **** 
+ 324:src/hard.c    **** 
+ 325:src/hard.c    **** void Hard_Reset_Voltage_Filter (void)
+ 326:src/hard.c    **** {
+ 414              		.loc 1 326 0
+ 415              		.cfi_startproc
+ 416 0000 10B5     		push	{r4, lr}	@
+ 417              	.LCFI3:
+ 418              		.cfi_def_cfa_offset 8
+ 419              		.cfi_offset 4, -8
+ 420              		.cfi_offset 14, -4
+ 327:src/hard.c    ****     MA8Circular_Reset();
+ 421              		.loc 1 327 0
+ 422 0002 FFF7FEFF 		bl	MA8Circular_Reset	@
+ 328:src/hard.c    **** }
+ 423              		.loc 1 328 0
+ 424 0006 C046     		nop
+ 425              		@ sp needed	@
+ 426 0008 10BD     		pop	{r4, pc}
+ 427              		.cfi_endproc
+ 428              	.LFE23:
+ 429              		.size	Hard_Reset_Voltage_Filter, .-Hard_Reset_Voltage_Filter
+ 430 000a C046     		.section	.text.Hard_Update_Voltage_Sense,"ax",%progbits
+ 431              		.align	2
+ 432              		.global	Hard_Update_Voltage_Sense
+ 433              		.code	16
+ 434              		.thumb_func
+ 435              		.type	Hard_Update_Voltage_Sense, %function
+ 436              	Hard_Update_Voltage_Sense:
+ 437              	.LFB24:
+ 329:src/hard.c    **** 
+ 330:src/hard.c    **** unsigned char Hard_Update_Voltage_Sense (void)
+ 331:src/hard.c    **** {
+ 438              		.loc 1 331 0
+ 439              		.cfi_startproc
+ 440 0000 10B5     		push	{r4, lr}	@
+ 441              	.LCFI4:
+ 442              		.cfi_def_cfa_offset 8
+ 443              		.cfi_offset 4, -8
+ 444              		.cfi_offset 14, -4
+ 445 0002 82B0     		sub	sp, sp, #8	@,,
+ 446              	.LCFI5:
+ 447              		.cfi_def_cfa_offset 16
+ 332:src/hard.c    ****     unsigned char new_data = 0;
+ 448              		.loc 1 332 0
+ 449 0004 6B46     		mov	r3, sp	@ tmp189,
+ 450 0006 0733     		adds	r3, r3, #7	@ tmp124,
+ 451 0008 0022     		movs	r2, #0	@ tmp125,
+ 452 000a 1A70     		strb	r2, [r3]	@ tmp126, new_data
+ 333:src/hard.c    ****     unsigned short voltage = 0;
+ARM GAS  /tmp/ccEt37Uj.s 			page 15
+
+
+ 453              		.loc 1 333 0
+ 454 000c 01AB     		add	r3, sp, #4	@ tmp127,,
+ 455 000e 0022     		movs	r2, #0	@ tmp128,
+ 456 0010 1A80     		strh	r2, [r3]	@ tmp129, voltage
+ 334:src/hard.c    ****     
+ 335:src/hard.c    ****     voltage = MA8Circular(Vline_Sense);
+ 457              		.loc 1 335 0
+ 458 0012 2C4B     		ldr	r3, .L33	@ tmp130,
+ 459 0014 1B89     		ldrh	r3, [r3, #8]	@ tmp132,
+ 460 0016 9BB2     		uxth	r3, r3	@ D.6002, tmp132
+ 461 0018 01AC     		add	r4, sp, #4	@ tmp133,,
+ 462 001a 1800     		movs	r0, r3	@, D.6002
+ 463 001c FFF7FEFF 		bl	MA8Circular	@
+ 464 0020 0300     		movs	r3, r0	@ tmp134,
+ 465 0022 2380     		strh	r3, [r4]	@ tmp136, voltage
+ 336:src/hard.c    **** 
+ 337:src/hard.c    **** // #ifdef USE_LED_AS_TIM1_CH3
+ 338:src/hard.c    **** //     CTRL_LED(voltage);
+ 339:src/hard.c    **** // #endif
+ 340:src/hard.c    ****     if (voltage > VOLTAGE_MAX_THRESHOLD)
+ 466              		.loc 1 340 0
+ 467 0024 01AB     		add	r3, sp, #4	@ tmp137,,
+ 468 0026 1B88     		ldrh	r3, [r3]	@ tmp138, voltage
+ 469 0028 642B     		cmp	r3, #100	@ tmp138,
+ 470 002a 19D9     		bls	.L28	@,
+ 341:src/hard.c    ****     {
+ 342:src/hard.c    ****         last_voltage_was_high = 1;
+ 471              		.loc 1 342 0
+ 472 002c 264B     		ldr	r3, .L33+4	@ tmp139,
+ 473 002e 0122     		movs	r2, #1	@ tmp140,
+ 474 0030 1A70     		strb	r2, [r3]	@ tmp141, last_voltage_was_high
+ 343:src/hard.c    ****         integrate_voltage++;
+ 475              		.loc 1 343 0
+ 476 0032 264B     		ldr	r3, .L33+8	@ tmp142,
+ 477 0034 1B88     		ldrh	r3, [r3]	@ D.6002, integrate_voltage
+ 478 0036 0133     		adds	r3, r3, #1	@ tmp143,
+ 479 0038 9AB2     		uxth	r2, r3	@ D.6002, tmp143
+ 480 003a 244B     		ldr	r3, .L33+8	@ tmp144,
+ 481 003c 1A80     		strh	r2, [r3]	@ tmp145, integrate_voltage
+ 344:src/hard.c    ****         integrate_voltage_in_positive++;
+ 482              		.loc 1 344 0
+ 483 003e 244B     		ldr	r3, .L33+12	@ tmp146,
+ 484 0040 1B88     		ldrh	r3, [r3]	@ D.6002, integrate_voltage_in_positive
+ 485 0042 0133     		adds	r3, r3, #1	@ tmp147,
+ 486 0044 9AB2     		uxth	r2, r3	@ D.6002, tmp147
+ 487 0046 224B     		ldr	r3, .L33+12	@ tmp148,
+ 488 0048 1A80     		strh	r2, [r3]	@ tmp149, integrate_voltage_in_positive
+ 345:src/hard.c    **** 
+ 346:src/hard.c    ****         //busco el pico de tension
+ 347:src/hard.c    ****         if (voltage > voltage_peak)
+ 489              		.loc 1 347 0
+ 490 004a 224B     		ldr	r3, .L33+16	@ tmp150,
+ 491 004c 1B88     		ldrh	r3, [r3]	@ D.6002, voltage_peak
+ 492 004e 01AA     		add	r2, sp, #4	@ tmp151,,
+ 493 0050 1288     		ldrh	r2, [r2]	@ tmp152, voltage
+ 494 0052 9A42     		cmp	r2, r3	@ tmp152, D.6002
+ 495 0054 2FD9     		bls	.L30	@,
+ARM GAS  /tmp/ccEt37Uj.s 			page 16
+
+
+ 348:src/hard.c    ****             voltage_peak = voltage;
+ 496              		.loc 1 348 0
+ 497 0056 1F4B     		ldr	r3, .L33+16	@ tmp153,
+ 498 0058 01AA     		add	r2, sp, #4	@ tmp154,,
+ 499 005a 1288     		ldrh	r2, [r2]	@ tmp155, voltage
+ 500 005c 1A80     		strh	r2, [r3]	@ tmp155, voltage_peak
+ 501 005e 2AE0     		b	.L30	@
+ 502              	.L28:
+ 349:src/hard.c    **** 
+ 350:src/hard.c    **** #ifdef USE_LED_FOR_POSITIVE_VOLTAGE
+ 351:src/hard.c    ****         LED_ON;
+ 352:src/hard.c    **** #endif
+ 353:src/hard.c    ****     }
+ 354:src/hard.c    ****     else if ((voltage < VOLTAGE_MIN_THRESHOLD) && (last_voltage_was_high))
+ 503              		.loc 1 354 0
+ 504 0060 01AB     		add	r3, sp, #4	@ tmp156,,
+ 505 0062 1B88     		ldrh	r3, [r3]	@ tmp157, voltage
+ 506 0064 312B     		cmp	r3, #49	@ tmp157,
+ 507 0066 20D8     		bhi	.L31	@,
+ 508              		.loc 1 354 0 is_stmt 0 discriminator 1
+ 509 0068 174B     		ldr	r3, .L33+4	@ tmp158,
+ 510 006a 1B78     		ldrb	r3, [r3]	@ D.6003, last_voltage_was_high
+ 511 006c 002B     		cmp	r3, #0	@ D.6003,
+ 512 006e 1CD0     		beq	.L31	@,
+ 355:src/hard.c    ****     {
+ 356:src/hard.c    ****         //flanco descendente
+ 357:src/hard.c    ****         last_voltage_cycle = integrate_voltage;
+ 513              		.loc 1 357 0 is_stmt 1
+ 514 0070 164B     		ldr	r3, .L33+8	@ tmp159,
+ 515 0072 1A88     		ldrh	r2, [r3]	@ D.6002, integrate_voltage
+ 516 0074 184B     		ldr	r3, .L33+20	@ tmp160,
+ 517 0076 1A80     		strh	r2, [r3]	@ tmp161, last_voltage_cycle
+ 358:src/hard.c    ****         last_voltage_cycle_in_positive = integrate_voltage_in_positive;
+ 518              		.loc 1 358 0
+ 519 0078 154B     		ldr	r3, .L33+12	@ tmp162,
+ 520 007a 1A88     		ldrh	r2, [r3]	@ D.6002, integrate_voltage_in_positive
+ 521 007c 174B     		ldr	r3, .L33+24	@ tmp163,
+ 522 007e 1A80     		strh	r2, [r3]	@ tmp164, last_voltage_cycle_in_positive
+ 359:src/hard.c    ****         last_voltage_peak = voltage_peak;
+ 523              		.loc 1 359 0
+ 524 0080 144B     		ldr	r3, .L33+16	@ tmp165,
+ 525 0082 1A88     		ldrh	r2, [r3]	@ D.6002, voltage_peak
+ 526 0084 164B     		ldr	r3, .L33+28	@ tmp166,
+ 527 0086 1A80     		strh	r2, [r3]	@ tmp167, last_voltage_peak
+ 360:src/hard.c    ****         integrate_voltage = 1;
+ 528              		.loc 1 360 0
+ 529 0088 104B     		ldr	r3, .L33+8	@ tmp168,
+ 530 008a 0122     		movs	r2, #1	@ tmp169,
+ 531 008c 1A80     		strh	r2, [r3]	@ tmp170, integrate_voltage
+ 361:src/hard.c    ****         integrate_voltage_in_positive = 0;
+ 532              		.loc 1 361 0
+ 533 008e 104B     		ldr	r3, .L33+12	@ tmp171,
+ 534 0090 0022     		movs	r2, #0	@ tmp172,
+ 535 0092 1A80     		strh	r2, [r3]	@ tmp173, integrate_voltage_in_positive
+ 362:src/hard.c    ****         voltage_peak = 0;
+ 536              		.loc 1 362 0
+ 537 0094 0F4B     		ldr	r3, .L33+16	@ tmp174,
+ARM GAS  /tmp/ccEt37Uj.s 			page 17
+
+
+ 538 0096 0022     		movs	r2, #0	@ tmp175,
+ 539 0098 1A80     		strh	r2, [r3]	@ tmp176, voltage_peak
+ 363:src/hard.c    ****         last_voltage_was_high = 0;
+ 540              		.loc 1 363 0
+ 541 009a 0B4B     		ldr	r3, .L33+4	@ tmp177,
+ 542 009c 0022     		movs	r2, #0	@ tmp178,
+ 543 009e 1A70     		strb	r2, [r3]	@ tmp179, last_voltage_was_high
+ 364:src/hard.c    ****         new_data = 1;
+ 544              		.loc 1 364 0
+ 545 00a0 6B46     		mov	r3, sp	@ tmp190,
+ 546 00a2 0733     		adds	r3, r3, #7	@ tmp180,
+ 547 00a4 0122     		movs	r2, #1	@ tmp181,
+ 548 00a6 1A70     		strb	r2, [r3]	@ tmp182, new_data
+ 549 00a8 05E0     		b	.L30	@
+ 550              	.L31:
+ 365:src/hard.c    ****             
+ 366:src/hard.c    **** #ifdef USE_LED_FOR_MAINS_SYNC
+ 367:src/hard.c    ****         LED_ON;
+ 368:src/hard.c    **** #endif
+ 369:src/hard.c    **** #ifdef USE_LED_FOR_POSITIVE_VOLTAGE
+ 370:src/hard.c    ****         LED_OFF;
+ 371:src/hard.c    **** #endif            
+ 372:src/hard.c    ****     }
+ 373:src/hard.c    ****     else
+ 374:src/hard.c    ****         integrate_voltage++;
+ 551              		.loc 1 374 0
+ 552 00aa 084B     		ldr	r3, .L33+8	@ tmp183,
+ 553 00ac 1B88     		ldrh	r3, [r3]	@ D.6002, integrate_voltage
+ 554 00ae 0133     		adds	r3, r3, #1	@ tmp184,
+ 555 00b0 9AB2     		uxth	r2, r3	@ D.6002, tmp184
+ 556 00b2 064B     		ldr	r3, .L33+8	@ tmp185,
+ 557 00b4 1A80     		strh	r2, [r3]	@ tmp186, integrate_voltage
+ 558              	.L30:
+ 375:src/hard.c    **** 
+ 376:src/hard.c    **** #ifdef USE_LED_FOR_MAINS_SYNC
+ 377:src/hard.c    ****     if (LED)
+ 378:src/hard.c    ****     {
+ 379:src/hard.c    ****         if (integrate_voltage > (last_voltage_cycle >> 1))
+ 380:src/hard.c    ****             LED_OFF;
+ 381:src/hard.c    ****     }
+ 382:src/hard.c    **** #endif
+ 383:src/hard.c    ****         
+ 384:src/hard.c    ****     return new_data;
+ 559              		.loc 1 384 0
+ 560 00b6 6B46     		mov	r3, sp	@ tmp191,
+ 561 00b8 0733     		adds	r3, r3, #7	@ tmp187,
+ 562 00ba 1B78     		ldrb	r3, [r3]	@ D.6003, new_data
+ 385:src/hard.c    **** }
+ 563              		.loc 1 385 0
+ 564 00bc 1800     		movs	r0, r3	@, <retval>
+ 565 00be 02B0     		add	sp, sp, #8	@,,
+ 566              		@ sp needed	@
+ 567 00c0 10BD     		pop	{r4, pc}
+ 568              	.L34:
+ 569 00c2 C046     		.align	2
+ 570              	.L33:
+ 571 00c4 00000000 		.word	adc_ch
+ARM GAS  /tmp/ccEt37Uj.s 			page 18
+
+
+ 572 00c8 00000000 		.word	last_voltage_was_high
+ 573 00cc 00000000 		.word	integrate_voltage
+ 574 00d0 00000000 		.word	integrate_voltage_in_positive
+ 575 00d4 00000000 		.word	voltage_peak
+ 576 00d8 00000000 		.word	last_voltage_cycle
+ 577 00dc 00000000 		.word	last_voltage_cycle_in_positive
+ 578 00e0 00000000 		.word	last_voltage_peak
+ 579              		.cfi_endproc
+ 580              	.LFE24:
+ 581              		.size	Hard_Update_Voltage_Sense, .-Hard_Update_Voltage_Sense
+ 582              		.global	__aeabi_uidiv
+ 583              		.section	.text.Hard_Get_Conduction_Angle,"ax",%progbits
+ 584              		.align	2
+ 585              		.global	Hard_Get_Conduction_Angle
+ 586              		.code	16
+ 587              		.thumb_func
+ 588              		.type	Hard_Get_Conduction_Angle, %function
+ 589              	Hard_Get_Conduction_Angle:
+ 590              	.LFB25:
+ 386:src/hard.c    **** 
+ 387:src/hard.c    **** //a 48KHZ
+ 388:src/hard.c    **** //480 puntos -> ciclo; 188 puntos -> parte positiva
+ 389:src/hard.c    **** //TODO: comprobar como funciona con 70KHz
+ 390:src/hard.c    **** //TODO: revisar que a minima tension de alimentacion 180Vac? siga contestando 180
+ 391:src/hard.c    **** unsigned char Hard_Get_Conduction_Angle (void)
+ 392:src/hard.c    **** {
+ 591              		.loc 1 392 0
+ 592              		.cfi_startproc
+ 593 0000 00B5     		push	{lr}	@
+ 594              	.LCFI6:
+ 595              		.cfi_def_cfa_offset 4
+ 596              		.cfi_offset 14, -4
+ 597 0002 83B0     		sub	sp, sp, #12	@,,
+ 598              	.LCFI7:
+ 599              		.cfi_def_cfa_offset 16
+ 393:src/hard.c    ****     unsigned int temp = 0;
+ 600              		.loc 1 393 0
+ 601 0004 0023     		movs	r3, #0	@ tmp117,
+ 602 0006 0193     		str	r3, [sp, #4]	@ tmp117, temp
+ 394:src/hard.c    **** 
+ 395:src/hard.c    ****     //tengo que multipicar por 1.27 para ajustar 188 a 240
+ 396:src/hard.c    ****     //ademas multiplicar por 360 para saber el angulo de conduccion
+ 397:src/hard.c    ****     temp = last_voltage_cycle_in_positive * 460;
+ 603              		.loc 1 397 0
+ 604 0008 0C4B     		ldr	r3, .L38	@ tmp118,
+ 605 000a 1B88     		ldrh	r3, [r3]	@ D.6004, last_voltage_cycle_in_positive
+ 606 000c 1A00     		movs	r2, r3	@ D.6005, D.6004
+ 607 000e E623     		movs	r3, #230	@ tmp129,
+ 608 0010 5B00     		lsls	r3, r3, #1	@ tmp119, tmp129,
+ 609 0012 5343     		muls	r3, r2	@ D.6005, D.6005
+ 610 0014 0193     		str	r3, [sp, #4]	@ D.6005, temp
+ 398:src/hard.c    ****     temp = temp / last_voltage_cycle;
+ 611              		.loc 1 398 0
+ 612 0016 0A4B     		ldr	r3, .L38+4	@ tmp120,
+ 613 0018 1B88     		ldrh	r3, [r3]	@ D.6004, last_voltage_cycle
+ 614 001a 1900     		movs	r1, r3	@, D.6006
+ 615 001c 0198     		ldr	r0, [sp, #4]	@, temp
+ARM GAS  /tmp/ccEt37Uj.s 			page 19
+
+
+ 616 001e FFF7FEFF 		bl	__aeabi_uidiv	@
+ 617 0022 0300     		movs	r3, r0	@ tmp123,
+ 618 0024 0193     		str	r3, [sp, #4]	@ tmp123, temp
+ 399:src/hard.c    ****     if (temp > 180)
+ 619              		.loc 1 399 0
+ 620 0026 019B     		ldr	r3, [sp, #4]	@ tmp124, temp
+ 621 0028 B42B     		cmp	r3, #180	@ tmp124,
+ 622 002a 01D9     		bls	.L36	@,
+ 400:src/hard.c    ****         temp = 180;
+ 623              		.loc 1 400 0
+ 624 002c B423     		movs	r3, #180	@ tmp125,
+ 625 002e 0193     		str	r3, [sp, #4]	@ tmp125, temp
+ 626              	.L36:
+ 401:src/hard.c    **** 
+ 402:src/hard.c    ****     // return 180;
+ 403:src/hard.c    ****     return (unsigned char) temp;
+ 627              		.loc 1 403 0
+ 628 0030 019B     		ldr	r3, [sp, #4]	@ tmp127, temp
+ 629 0032 DBB2     		uxtb	r3, r3	@ D.6007, tmp126
+ 404:src/hard.c    **** }
+ 630              		.loc 1 404 0
+ 631 0034 1800     		movs	r0, r3	@, <retval>
+ 632 0036 03B0     		add	sp, sp, #12	@,,
+ 633              		@ sp needed	@
+ 634 0038 00BD     		pop	{pc}
+ 635              	.L39:
+ 636 003a C046     		.align	2
+ 637              	.L38:
+ 638 003c 00000000 		.word	last_voltage_cycle_in_positive
+ 639 0040 00000000 		.word	last_voltage_cycle
+ 640              		.cfi_endproc
+ 641              	.LFE25:
+ 642              		.size	Hard_Get_Conduction_Angle, .-Hard_Get_Conduction_Angle
+ 643              		.section	.text.Hard_Get_Hidden_Value,"ax",%progbits
+ 644              		.align	2
+ 645              		.global	Hard_Get_Hidden_Value
+ 646              		.code	16
+ 647              		.thumb_func
+ 648              		.type	Hard_Get_Hidden_Value, %function
+ 649              	Hard_Get_Hidden_Value:
+ 650              	.LFB26:
+ 405:src/hard.c    **** 
+ 406:src/hard.c    **** unsigned short Hard_Get_Hidden_Value (void)
+ 407:src/hard.c    **** {
+ 651              		.loc 1 407 0
+ 652              		.cfi_startproc
+ 408:src/hard.c    ****     return last_voltage_cycle;
+ 653              		.loc 1 408 0
+ 654 0000 014B     		ldr	r3, .L42	@ tmp112,
+ 655 0002 1B88     		ldrh	r3, [r3]	@ D.6008, last_voltage_cycle
+ 409:src/hard.c    ****     // return last_voltage_cycle_in_positive;
+ 410:src/hard.c    **** }
+ 656              		.loc 1 410 0
+ 657 0004 1800     		movs	r0, r3	@, <retval>
+ 658              		@ sp needed	@
+ 659 0006 7047     		bx	lr
+ 660              	.L43:
+ARM GAS  /tmp/ccEt37Uj.s 			page 20
+
+
+ 661              		.align	2
+ 662              	.L42:
+ 663 0008 00000000 		.word	last_voltage_cycle
+ 664              		.cfi_endproc
+ 665              	.LFE26:
+ 666              		.size	Hard_Get_Hidden_Value, .-Hard_Get_Hidden_Value
+ 667              		.text
+ 668              	.Letext0:
+ 669              		.file 2 "src/hard.h"
+ 670              		.file 3 "/usr/local/sbin/gcc-arm-none-eabi-5_2-2015q4/arm-none-eabi/include/machine/_default_types
+ 671              		.file 4 "/usr/local/sbin/gcc-arm-none-eabi-5_2-2015q4/arm-none-eabi/include/sys/_stdint.h"
+ 672              		.file 5 "./cmsis_boot/stm32f0xx.h"
+ 673              		.section	.debug_info,"",%progbits
+ 674              	.Ldebug_info0:
+ 675 0000 E4030000 		.4byte	0x3e4
+ 676 0004 0200     		.2byte	0x2
+ 677 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 678 000a 04       		.byte	0x4
+ 679 000b 01       		.uleb128 0x1
+ 680 000c 05030000 		.4byte	.LASF55
+ 681 0010 0C       		.byte	0xc
+ 682 0011 4E010000 		.4byte	.LASF56
+ 683 0015 C8010000 		.4byte	.LASF57
+ 684 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 685 001d 00000000 		.4byte	0
+ 686 0021 00000000 		.4byte	0
+ 687 0025 00000000 		.4byte	.Ldebug_line0
+ 688 0029 02       		.uleb128 0x2
+ 689 002a 01       		.byte	0x1
+ 690 002b 08       		.byte	0x8
+ 691 002c 40010000 		.4byte	.LASF4
+ 692 0030 03       		.uleb128 0x3
+ 693 0031 01       		.byte	0x1
+ 694 0032 29000000 		.4byte	0x29
+ 695 0036 02       		.byte	0x2
+ 696 0037 C5       		.byte	0xc5
+ 697 0038 55000000 		.4byte	0x55
+ 698 003c 04       		.uleb128 0x4
+ 699 003d BD000000 		.4byte	.LASF0
+ 700 0041 00       		.byte	0
+ 701 0042 04       		.uleb128 0x4
+ 702 0043 28010000 		.4byte	.LASF1
+ 703 0047 01       		.byte	0x1
+ 704 0048 04       		.uleb128 0x4
+ 705 0049 DC020000 		.4byte	.LASF2
+ 706 004d 02       		.byte	0x2
+ 707 004e 04       		.uleb128 0x4
+ 708 004f 97020000 		.4byte	.LASF3
+ 709 0053 03       		.byte	0x3
+ 710 0054 00       		.byte	0
+ 711 0055 05       		.uleb128 0x5
+ 712 0056 FA000000 		.4byte	.LASF7
+ 713 005a 02       		.byte	0x2
+ 714 005b CA       		.byte	0xca
+ 715 005c 30000000 		.4byte	0x30
+ 716 0060 02       		.uleb128 0x2
+ 717 0061 01       		.byte	0x1
+ARM GAS  /tmp/ccEt37Uj.s 			page 21
+
+
+ 718 0062 06       		.byte	0x6
+ 719 0063 E5000000 		.4byte	.LASF5
+ 720 0067 02       		.uleb128 0x2
+ 721 0068 02       		.byte	0x2
+ 722 0069 05       		.byte	0x5
+ 723 006a 35000000 		.4byte	.LASF6
+ 724 006e 05       		.uleb128 0x5
+ 725 006f 6E000000 		.4byte	.LASF8
+ 726 0073 03       		.byte	0x3
+ 727 0074 2B       		.byte	0x2b
+ 728 0075 79000000 		.4byte	0x79
+ 729 0079 02       		.uleb128 0x2
+ 730 007a 02       		.byte	0x2
+ 731 007b 07       		.byte	0x7
+ 732 007c 16020000 		.4byte	.LASF9
+ 733 0080 02       		.uleb128 0x2
+ 734 0081 04       		.byte	0x4
+ 735 0082 05       		.byte	0x5
+ 736 0083 0C010000 		.4byte	.LASF10
+ 737 0087 05       		.uleb128 0x5
+ 738 0088 63000000 		.4byte	.LASF11
+ 739 008c 03       		.byte	0x3
+ 740 008d 41       		.byte	0x41
+ 741 008e 92000000 		.4byte	0x92
+ 742 0092 02       		.uleb128 0x2
+ 743 0093 04       		.byte	0x4
+ 744 0094 07       		.byte	0x7
+ 745 0095 85020000 		.4byte	.LASF12
+ 746 0099 02       		.uleb128 0x2
+ 747 009a 08       		.byte	0x8
+ 748 009b 05       		.byte	0x5
+ 749 009c 55000000 		.4byte	.LASF13
+ 750 00a0 02       		.uleb128 0x2
+ 751 00a1 08       		.byte	0x8
+ 752 00a2 07       		.byte	0x7
+ 753 00a3 62010000 		.4byte	.LASF14
+ 754 00a7 06       		.uleb128 0x6
+ 755 00a8 04       		.byte	0x4
+ 756 00a9 05       		.byte	0x5
+ 757 00aa 696E7400 		.ascii	"int\000"
+ 758 00ae 02       		.uleb128 0x2
+ 759 00af 04       		.byte	0x4
+ 760 00b0 07       		.byte	0x7
+ 761 00b1 82010000 		.4byte	.LASF15
+ 762 00b5 05       		.uleb128 0x5
+ 763 00b6 8F010000 		.4byte	.LASF16
+ 764 00ba 04       		.byte	0x4
+ 765 00bb 1A       		.byte	0x1a
+ 766 00bc 6E000000 		.4byte	0x6e
+ 767 00c0 05       		.uleb128 0x5
+ 768 00c1 79010000 		.4byte	.LASF17
+ 769 00c5 04       		.byte	0x4
+ 770 00c6 20       		.byte	0x20
+ 771 00c7 87000000 		.4byte	0x87
+ 772 00cb 02       		.uleb128 0x2
+ 773 00cc 04       		.byte	0x4
+ 774 00cd 07       		.byte	0x7
+ARM GAS  /tmp/ccEt37Uj.s 			page 22
+
+
+ 775 00ce 3F000000 		.4byte	.LASF18
+ 776 00d2 07       		.uleb128 0x7
+ 777 00d3 C0000000 		.4byte	0xc0
+ 778 00d7 08       		.uleb128 0x8
+ 779 00d8 C0000000 		.4byte	0xc0
+ 780 00dc E7000000 		.4byte	0xe7
+ 781 00e0 09       		.uleb128 0x9
+ 782 00e1 CB000000 		.4byte	0xcb
+ 783 00e5 01       		.byte	0x1
+ 784 00e6 00       		.byte	0
+ 785 00e7 07       		.uleb128 0x7
+ 786 00e8 B5000000 		.4byte	0xb5
+ 787 00ec 0A       		.uleb128 0xa
+ 788 00ed 2C       		.byte	0x2c
+ 789 00ee 05       		.byte	0x5
+ 790 00ef 6902     		.2byte	0x269
+ 791 00f1 C8010000 		.4byte	0x1c8
+ 792 00f5 0B       		.uleb128 0xb
+ 793 00f6 22010000 		.4byte	.LASF19
+ 794 00fa 05       		.byte	0x5
+ 795 00fb 6B02     		.2byte	0x26b
+ 796 00fd D2000000 		.4byte	0xd2
+ 797 0101 02       		.byte	0x2
+ 798 0102 23       		.byte	0x23
+ 799 0103 00       		.uleb128 0
+ 800 0104 0B       		.uleb128 0xb
+ 801 0105 DE000000 		.4byte	.LASF20
+ 802 0109 05       		.byte	0x5
+ 803 010a 6C02     		.2byte	0x26c
+ 804 010c E7000000 		.4byte	0xe7
+ 805 0110 02       		.byte	0x2
+ 806 0111 23       		.byte	0x23
+ 807 0112 04       		.uleb128 0x4
+ 808 0113 0B       		.uleb128 0xb
+ 809 0114 4D020000 		.4byte	.LASF21
+ 810 0118 05       		.byte	0x5
+ 811 0119 6D02     		.2byte	0x26d
+ 812 011b B5000000 		.4byte	0xb5
+ 813 011f 02       		.byte	0x2
+ 814 0120 23       		.byte	0x23
+ 815 0121 06       		.uleb128 0x6
+ 816 0122 0B       		.uleb128 0xb
+ 817 0123 6B020000 		.4byte	.LASF22
+ 818 0127 05       		.byte	0x5
+ 819 0128 6E02     		.2byte	0x26e
+ 820 012a D2000000 		.4byte	0xd2
+ 821 012e 02       		.byte	0x2
+ 822 012f 23       		.byte	0x23
+ 823 0130 08       		.uleb128 0x8
+ 824 0131 0B       		.uleb128 0xb
+ 825 0132 06010000 		.4byte	.LASF23
+ 826 0136 05       		.byte	0x5
+ 827 0137 6F02     		.2byte	0x26f
+ 828 0139 D2000000 		.4byte	0xd2
+ 829 013d 02       		.byte	0x2
+ 830 013e 23       		.byte	0x23
+ 831 013f 0C       		.uleb128 0xc
+ARM GAS  /tmp/ccEt37Uj.s 			page 23
+
+
+ 832 0140 0C       		.uleb128 0xc
+ 833 0141 49445200 		.ascii	"IDR\000"
+ 834 0145 05       		.byte	0x5
+ 835 0146 7002     		.2byte	0x270
+ 836 0148 E7000000 		.4byte	0xe7
+ 837 014c 02       		.byte	0x2
+ 838 014d 23       		.byte	0x23
+ 839 014e 10       		.uleb128 0x10
+ 840 014f 0B       		.uleb128 0xb
+ 841 0150 57020000 		.4byte	.LASF24
+ 842 0154 05       		.byte	0x5
+ 843 0155 7102     		.2byte	0x271
+ 844 0157 B5000000 		.4byte	0xb5
+ 845 015b 02       		.byte	0x2
+ 846 015c 23       		.byte	0x23
+ 847 015d 12       		.uleb128 0x12
+ 848 015e 0C       		.uleb128 0xc
+ 849 015f 4F445200 		.ascii	"ODR\000"
+ 850 0163 05       		.byte	0x5
+ 851 0164 7202     		.2byte	0x272
+ 852 0166 E7000000 		.4byte	0xe7
+ 853 016a 02       		.byte	0x2
+ 854 016b 23       		.byte	0x23
+ 855 016c 14       		.uleb128 0x14
+ 856 016d 0B       		.uleb128 0xb
+ 857 016e 61020000 		.4byte	.LASF25
+ 858 0172 05       		.byte	0x5
+ 859 0173 7302     		.2byte	0x273
+ 860 0175 B5000000 		.4byte	0xb5
+ 861 0179 02       		.byte	0x2
+ 862 017a 23       		.byte	0x23
+ 863 017b 16       		.uleb128 0x16
+ 864 017c 0B       		.uleb128 0xb
+ 865 017d 1D010000 		.4byte	.LASF26
+ 866 0181 05       		.byte	0x5
+ 867 0182 7402     		.2byte	0x274
+ 868 0184 D2000000 		.4byte	0xd2
+ 869 0188 02       		.byte	0x2
+ 870 0189 23       		.byte	0x23
+ 871 018a 18       		.uleb128 0x18
+ 872 018b 0B       		.uleb128 0xb
+ 873 018c C6030000 		.4byte	.LASF27
+ 874 0190 05       		.byte	0x5
+ 875 0191 7502     		.2byte	0x275
+ 876 0193 D2000000 		.4byte	0xd2
+ 877 0197 02       		.byte	0x2
+ 878 0198 23       		.byte	0x23
+ 879 0199 1C       		.uleb128 0x1c
+ 880 019a 0C       		.uleb128 0xc
+ 881 019b 41465200 		.ascii	"AFR\000"
+ 882 019f 05       		.byte	0x5
+ 883 01a0 7602     		.2byte	0x276
+ 884 01a2 C8010000 		.4byte	0x1c8
+ 885 01a6 02       		.byte	0x2
+ 886 01a7 23       		.byte	0x23
+ 887 01a8 20       		.uleb128 0x20
+ 888 01a9 0C       		.uleb128 0xc
+ARM GAS  /tmp/ccEt37Uj.s 			page 24
+
+
+ 889 01aa 42525200 		.ascii	"BRR\000"
+ 890 01ae 05       		.byte	0x5
+ 891 01af 7702     		.2byte	0x277
+ 892 01b1 E7000000 		.4byte	0xe7
+ 893 01b5 02       		.byte	0x2
+ 894 01b6 23       		.byte	0x23
+ 895 01b7 28       		.uleb128 0x28
+ 896 01b8 0B       		.uleb128 0xb
+ 897 01b9 B3000000 		.4byte	.LASF28
+ 898 01bd 05       		.byte	0x5
+ 899 01be 7802     		.2byte	0x278
+ 900 01c0 B5000000 		.4byte	0xb5
+ 901 01c4 02       		.byte	0x2
+ 902 01c5 23       		.byte	0x23
+ 903 01c6 2A       		.uleb128 0x2a
+ 904 01c7 00       		.byte	0
+ 905 01c8 07       		.uleb128 0x7
+ 906 01c9 D7000000 		.4byte	0xd7
+ 907 01cd 0D       		.uleb128 0xd
+ 908 01ce 00000000 		.4byte	.LASF29
+ 909 01d2 05       		.byte	0x5
+ 910 01d3 7902     		.2byte	0x279
+ 911 01d5 EC000000 		.4byte	0xec
+ 912 01d9 02       		.uleb128 0x2
+ 913 01da 08       		.byte	0x8
+ 914 01db 04       		.byte	0x4
+ 915 01dc 34010000 		.4byte	.LASF30
+ 916 01e0 0E       		.uleb128 0xe
+ 917 01e1 04       		.byte	0x4
+ 918 01e2 E6010000 		.4byte	0x1e6
+ 919 01e6 02       		.uleb128 0x2
+ 920 01e7 01       		.byte	0x1
+ 921 01e8 08       		.byte	0x8
+ 922 01e9 F7010000 		.4byte	.LASF31
+ 923 01ed 0F       		.uleb128 0xf
+ 924 01ee 01       		.byte	0x1
+ 925 01ef 0D000000 		.4byte	.LASF32
+ 926 01f3 01       		.byte	0x1
+ 927 01f4 37       		.byte	0x37
+ 928 01f5 01       		.byte	0x1
+ 929 01f6 00000000 		.4byte	.LFB20
+ 930 01fa 28000000 		.4byte	.LFE20
+ 931 01fe 00000000 		.4byte	.LLST0
+ 932 0202 01       		.byte	0x1
+ 933 0203 16020000 		.4byte	0x216
+ 934 0207 10       		.uleb128 0x10
+ 935 0208 59010000 		.4byte	.LASF34
+ 936 020c 01       		.byte	0x1
+ 937 020d 37       		.byte	0x37
+ 938 020e 29000000 		.4byte	0x29
+ 939 0212 02       		.byte	0x2
+ 940 0213 91       		.byte	0x91
+ 941 0214 7F       		.sleb128 -1
+ 942 0215 00       		.byte	0
+ 943 0216 11       		.uleb128 0x11
+ 944 0217 01       		.byte	0x1
+ 945 0218 29020000 		.4byte	.LASF35
+ARM GAS  /tmp/ccEt37Uj.s 			page 25
+
+
+ 946 021c 01       		.byte	0x1
+ 947 021d 3E       		.byte	0x3e
+ 948 021e 01       		.byte	0x1
+ 949 021f 00000000 		.4byte	.LFB21
+ 950 0223 00010000 		.4byte	.LFE21
+ 951 0227 02       		.byte	0x2
+ 952 0228 7D       		.byte	0x7d
+ 953 0229 00       		.sleb128 0
+ 954 022a 01       		.byte	0x1
+ 955 022b 12       		.uleb128 0x12
+ 956 022c 01       		.byte	0x1
+ 957 022d 79000000 		.4byte	.LASF33
+ 958 0231 01       		.byte	0x1
+ 959 0232 FD       		.byte	0xfd
+ 960 0233 01       		.byte	0x1
+ 961 0234 00000000 		.4byte	.LFB22
+ 962 0238 34000000 		.4byte	.LFE22
+ 963 023c 20000000 		.4byte	.LLST1
+ 964 0240 01       		.byte	0x1
+ 965 0241 54020000 		.4byte	0x254
+ 966 0245 13       		.uleb128 0x13
+ 967 0246 73747200 		.ascii	"str\000"
+ 968 024a 01       		.byte	0x1
+ 969 024b FD       		.byte	0xfd
+ 970 024c E0010000 		.4byte	0x1e0
+ 971 0250 02       		.byte	0x2
+ 972 0251 91       		.byte	0x91
+ 973 0252 74       		.sleb128 -12
+ 974 0253 00       		.byte	0
+ 975 0254 14       		.uleb128 0x14
+ 976 0255 01       		.byte	0x1
+ 977 0256 AE010000 		.4byte	.LASF36
+ 978 025a 01       		.byte	0x1
+ 979 025b 4501     		.2byte	0x145
+ 980 025d 01       		.byte	0x1
+ 981 025e 00000000 		.4byte	.LFB23
+ 982 0262 0A000000 		.4byte	.LFE23
+ 983 0266 4C000000 		.4byte	.LLST2
+ 984 026a 01       		.byte	0x1
+ 985 026b 15       		.uleb128 0x15
+ 986 026c 01       		.byte	0x1
+ 987 026d FC010000 		.4byte	.LASF39
+ 988 0271 01       		.byte	0x1
+ 989 0272 4A01     		.2byte	0x14a
+ 990 0274 01       		.byte	0x1
+ 991 0275 29000000 		.4byte	0x29
+ 992 0279 00000000 		.4byte	.LFB24
+ 993 027d E4000000 		.4byte	.LFE24
+ 994 0281 6C000000 		.4byte	.LLST3
+ 995 0285 01       		.byte	0x1
+ 996 0286 A9020000 		.4byte	0x2a9
+ 997 028a 16       		.uleb128 0x16
+ 998 028b F1000000 		.4byte	.LASF37
+ 999 028f 01       		.byte	0x1
+ 1000 0290 4C01     		.2byte	0x14c
+ 1001 0292 29000000 		.4byte	0x29
+ 1002 0296 02       		.byte	0x2
+ARM GAS  /tmp/ccEt37Uj.s 			page 26
+
+
+ 1003 0297 91       		.byte	0x91
+ 1004 0298 77       		.sleb128 -9
+ 1005 0299 16       		.uleb128 0x16
+ 1006 029a 15010000 		.4byte	.LASF38
+ 1007 029e 01       		.byte	0x1
+ 1008 029f 4D01     		.2byte	0x14d
+ 1009 02a1 79000000 		.4byte	0x79
+ 1010 02a5 02       		.byte	0x2
+ 1011 02a6 91       		.byte	0x91
+ 1012 02a7 74       		.sleb128 -12
+ 1013 02a8 00       		.byte	0
+ 1014 02a9 15       		.uleb128 0x15
+ 1015 02aa 01       		.byte	0x1
+ 1016 02ab 33020000 		.4byte	.LASF40
+ 1017 02af 01       		.byte	0x1
+ 1018 02b0 8701     		.2byte	0x187
+ 1019 02b2 01       		.byte	0x1
+ 1020 02b3 29000000 		.4byte	0x29
+ 1021 02b7 00000000 		.4byte	.LFB25
+ 1022 02bb 44000000 		.4byte	.LFE25
+ 1023 02bf 98000000 		.4byte	.LLST4
+ 1024 02c3 01       		.byte	0x1
+ 1025 02c4 D8020000 		.4byte	0x2d8
+ 1026 02c8 16       		.uleb128 0x16
+ 1027 02c9 30000000 		.4byte	.LASF41
+ 1028 02cd 01       		.byte	0x1
+ 1029 02ce 8901     		.2byte	0x189
+ 1030 02d0 AE000000 		.4byte	0xae
+ 1031 02d4 02       		.byte	0x2
+ 1032 02d5 91       		.byte	0x91
+ 1033 02d6 74       		.sleb128 -12
+ 1034 02d7 00       		.byte	0
+ 1035 02d8 17       		.uleb128 0x17
+ 1036 02d9 01       		.byte	0x1
+ 1037 02da B0030000 		.4byte	.LASF58
+ 1038 02de 01       		.byte	0x1
+ 1039 02df 9601     		.2byte	0x196
+ 1040 02e1 01       		.byte	0x1
+ 1041 02e2 79000000 		.4byte	0x79
+ 1042 02e6 00000000 		.4byte	.LFB26
+ 1043 02ea 0C000000 		.4byte	.LFE26
+ 1044 02ee 02       		.byte	0x2
+ 1045 02ef 7D       		.byte	0x7d
+ 1046 02f0 00       		.sleb128 0
+ 1047 02f1 01       		.byte	0x1
+ 1048 02f2 18       		.uleb128 0x18
+ 1049 02f3 A6020000 		.4byte	.LASF42
+ 1050 02f7 01       		.byte	0x1
+ 1051 02f8 16       		.byte	0x16
+ 1052 02f9 FF020000 		.4byte	0x2ff
+ 1053 02fd 01       		.byte	0x1
+ 1054 02fe 01       		.byte	0x1
+ 1055 02ff 07       		.uleb128 0x7
+ 1056 0300 79000000 		.4byte	0x79
+ 1057 0304 08       		.uleb128 0x8
+ 1058 0305 79000000 		.4byte	0x79
+ 1059 0309 0F030000 		.4byte	0x30f
+ARM GAS  /tmp/ccEt37Uj.s 			page 27
+
+
+ 1060 030d 19       		.uleb128 0x19
+ 1061 030e 00       		.byte	0
+ 1062 030f 18       		.uleb128 0x18
+ 1063 0310 AC000000 		.4byte	.LASF43
+ 1064 0314 01       		.byte	0x1
+ 1065 0315 17       		.byte	0x17
+ 1066 0316 1C030000 		.4byte	0x31c
+ 1067 031a 01       		.byte	0x1
+ 1068 031b 01       		.byte	0x1
+ 1069 031c 07       		.uleb128 0x7
+ 1070 031d 04030000 		.4byte	0x304
+ 1071 0321 1A       		.uleb128 0x1a
+ 1072 0322 C2020000 		.4byte	.LASF44
+ 1073 0326 01       		.byte	0x1
+ 1074 0327 1E       		.byte	0x1e
+ 1075 0328 55000000 		.4byte	0x55
+ 1076 032c 01       		.byte	0x1
+ 1077 032d 05       		.byte	0x5
+ 1078 032e 03       		.byte	0x3
+ 1079 032f 00000000 		.4byte	led_state
+ 1080 0333 1A       		.uleb128 0x1a
+ 1081 0334 17000000 		.4byte	.LASF45
+ 1082 0338 01       		.byte	0x1
+ 1083 0339 1F       		.byte	0x1f
+ 1084 033a 29000000 		.4byte	0x29
+ 1085 033e 01       		.byte	0x1
+ 1086 033f 05       		.byte	0x5
+ 1087 0340 03       		.byte	0x3
+ 1088 0341 00000000 		.4byte	blink
+ 1089 0345 1A       		.uleb128 0x1a
+ 1090 0346 CC020000 		.4byte	.LASF46
+ 1091 034a 01       		.byte	0x1
+ 1092 034b 20       		.byte	0x20
+ 1093 034c 29000000 		.4byte	0x29
+ 1094 0350 01       		.byte	0x1
+ 1095 0351 05       		.byte	0x5
+ 1096 0352 03       		.byte	0x3
+ 1097 0353 00000000 		.4byte	how_many_blinks
+ 1098 0357 1A       		.uleb128 0x1a
+ 1099 0358 B0020000 		.4byte	.LASF47
+ 1100 035c 01       		.byte	0x1
+ 1101 035d 22       		.byte	0x22
+ 1102 035e 29000000 		.4byte	0x29
+ 1103 0362 01       		.byte	0x1
+ 1104 0363 05       		.byte	0x5
+ 1105 0364 03       		.byte	0x3
+ 1106 0365 00000000 		.4byte	hard_filter_index
+ 1107 0369 1A       		.uleb128 0x1a
+ 1108 036a 98010000 		.4byte	.LASF48
+ 1109 036e 01       		.byte	0x1
+ 1110 036f 23       		.byte	0x23
+ 1111 0370 29000000 		.4byte	0x29
+ 1112 0374 01       		.byte	0x1
+ 1113 0375 05       		.byte	0x5
+ 1114 0376 03       		.byte	0x3
+ 1115 0377 00000000 		.4byte	last_voltage_was_high
+ 1116 037b 1A       		.uleb128 0x1a
+ARM GAS  /tmp/ccEt37Uj.s 			page 28
+
+
+ 1117 037c CC000000 		.4byte	.LASF49
+ 1118 0380 01       		.byte	0x1
+ 1119 0381 24       		.byte	0x24
+ 1120 0382 79000000 		.4byte	0x79
+ 1121 0386 01       		.byte	0x1
+ 1122 0387 05       		.byte	0x5
+ 1123 0388 03       		.byte	0x3
+ 1124 0389 00000000 		.4byte	integrate_voltage
+ 1125 038d 1A       		.uleb128 0x1a
+ 1126 038e E7020000 		.4byte	.LASF50
+ 1127 0392 01       		.byte	0x1
+ 1128 0393 25       		.byte	0x25
+ 1129 0394 79000000 		.4byte	0x79
+ 1130 0398 01       		.byte	0x1
+ 1131 0399 05       		.byte	0x5
+ 1132 039a 03       		.byte	0x3
+ 1133 039b 00000000 		.4byte	integrate_voltage_in_positive
+ 1134 039f 1A       		.uleb128 0x1a
+ 1135 03a0 1D000000 		.4byte	.LASF51
+ 1136 03a4 01       		.byte	0x1
+ 1137 03a5 26       		.byte	0x26
+ 1138 03a6 79000000 		.4byte	0x79
+ 1139 03aa 01       		.byte	0x1
+ 1140 03ab 05       		.byte	0x5
+ 1141 03ac 03       		.byte	0x3
+ 1142 03ad 00000000 		.4byte	last_voltage_cycle
+ 1143 03b1 1A       		.uleb128 0x1a
+ 1144 03b2 8D000000 		.4byte	.LASF52
+ 1145 03b6 01       		.byte	0x1
+ 1146 03b7 27       		.byte	0x27
+ 1147 03b8 79000000 		.4byte	0x79
+ 1148 03bc 01       		.byte	0x1
+ 1149 03bd 05       		.byte	0x5
+ 1150 03be 03       		.byte	0x3
+ 1151 03bf 00000000 		.4byte	last_voltage_cycle_in_positive
+ 1152 03c3 1A       		.uleb128 0x1a
+ 1153 03c4 73020000 		.4byte	.LASF53
+ 1154 03c8 01       		.byte	0x1
+ 1155 03c9 28       		.byte	0x28
+ 1156 03ca 79000000 		.4byte	0x79
+ 1157 03ce 01       		.byte	0x1
+ 1158 03cf 05       		.byte	0x5
+ 1159 03d0 03       		.byte	0x3
+ 1160 03d1 00000000 		.4byte	last_voltage_peak
+ 1161 03d5 1A       		.uleb128 0x1a
+ 1162 03d6 48000000 		.4byte	.LASF54
+ 1163 03da 01       		.byte	0x1
+ 1164 03db 29       		.byte	0x29
+ 1165 03dc 79000000 		.4byte	0x79
+ 1166 03e0 01       		.byte	0x1
+ 1167 03e1 05       		.byte	0x5
+ 1168 03e2 03       		.byte	0x3
+ 1169 03e3 00000000 		.4byte	voltage_peak
+ 1170 03e7 00       		.byte	0
+ 1171              		.section	.debug_abbrev,"",%progbits
+ 1172              	.Ldebug_abbrev0:
+ 1173 0000 01       		.uleb128 0x1
+ARM GAS  /tmp/ccEt37Uj.s 			page 29
+
+
+ 1174 0001 11       		.uleb128 0x11
+ 1175 0002 01       		.byte	0x1
+ 1176 0003 25       		.uleb128 0x25
+ 1177 0004 0E       		.uleb128 0xe
+ 1178 0005 13       		.uleb128 0x13
+ 1179 0006 0B       		.uleb128 0xb
+ 1180 0007 03       		.uleb128 0x3
+ 1181 0008 0E       		.uleb128 0xe
+ 1182 0009 1B       		.uleb128 0x1b
+ 1183 000a 0E       		.uleb128 0xe
+ 1184 000b 55       		.uleb128 0x55
+ 1185 000c 06       		.uleb128 0x6
+ 1186 000d 11       		.uleb128 0x11
+ 1187 000e 01       		.uleb128 0x1
+ 1188 000f 52       		.uleb128 0x52
+ 1189 0010 01       		.uleb128 0x1
+ 1190 0011 10       		.uleb128 0x10
+ 1191 0012 06       		.uleb128 0x6
+ 1192 0013 00       		.byte	0
+ 1193 0014 00       		.byte	0
+ 1194 0015 02       		.uleb128 0x2
+ 1195 0016 24       		.uleb128 0x24
+ 1196 0017 00       		.byte	0
+ 1197 0018 0B       		.uleb128 0xb
+ 1198 0019 0B       		.uleb128 0xb
+ 1199 001a 3E       		.uleb128 0x3e
+ 1200 001b 0B       		.uleb128 0xb
+ 1201 001c 03       		.uleb128 0x3
+ 1202 001d 0E       		.uleb128 0xe
+ 1203 001e 00       		.byte	0
+ 1204 001f 00       		.byte	0
+ 1205 0020 03       		.uleb128 0x3
+ 1206 0021 04       		.uleb128 0x4
+ 1207 0022 01       		.byte	0x1
+ 1208 0023 0B       		.uleb128 0xb
+ 1209 0024 0B       		.uleb128 0xb
+ 1210 0025 49       		.uleb128 0x49
+ 1211 0026 13       		.uleb128 0x13
+ 1212 0027 3A       		.uleb128 0x3a
+ 1213 0028 0B       		.uleb128 0xb
+ 1214 0029 3B       		.uleb128 0x3b
+ 1215 002a 0B       		.uleb128 0xb
+ 1216 002b 01       		.uleb128 0x1
+ 1217 002c 13       		.uleb128 0x13
+ 1218 002d 00       		.byte	0
+ 1219 002e 00       		.byte	0
+ 1220 002f 04       		.uleb128 0x4
+ 1221 0030 28       		.uleb128 0x28
+ 1222 0031 00       		.byte	0
+ 1223 0032 03       		.uleb128 0x3
+ 1224 0033 0E       		.uleb128 0xe
+ 1225 0034 1C       		.uleb128 0x1c
+ 1226 0035 0B       		.uleb128 0xb
+ 1227 0036 00       		.byte	0
+ 1228 0037 00       		.byte	0
+ 1229 0038 05       		.uleb128 0x5
+ 1230 0039 16       		.uleb128 0x16
+ARM GAS  /tmp/ccEt37Uj.s 			page 30
+
+
+ 1231 003a 00       		.byte	0
+ 1232 003b 03       		.uleb128 0x3
+ 1233 003c 0E       		.uleb128 0xe
+ 1234 003d 3A       		.uleb128 0x3a
+ 1235 003e 0B       		.uleb128 0xb
+ 1236 003f 3B       		.uleb128 0x3b
+ 1237 0040 0B       		.uleb128 0xb
+ 1238 0041 49       		.uleb128 0x49
+ 1239 0042 13       		.uleb128 0x13
+ 1240 0043 00       		.byte	0
+ 1241 0044 00       		.byte	0
+ 1242 0045 06       		.uleb128 0x6
+ 1243 0046 24       		.uleb128 0x24
+ 1244 0047 00       		.byte	0
+ 1245 0048 0B       		.uleb128 0xb
+ 1246 0049 0B       		.uleb128 0xb
+ 1247 004a 3E       		.uleb128 0x3e
+ 1248 004b 0B       		.uleb128 0xb
+ 1249 004c 03       		.uleb128 0x3
+ 1250 004d 08       		.uleb128 0x8
+ 1251 004e 00       		.byte	0
+ 1252 004f 00       		.byte	0
+ 1253 0050 07       		.uleb128 0x7
+ 1254 0051 35       		.uleb128 0x35
+ 1255 0052 00       		.byte	0
+ 1256 0053 49       		.uleb128 0x49
+ 1257 0054 13       		.uleb128 0x13
+ 1258 0055 00       		.byte	0
+ 1259 0056 00       		.byte	0
+ 1260 0057 08       		.uleb128 0x8
+ 1261 0058 01       		.uleb128 0x1
+ 1262 0059 01       		.byte	0x1
+ 1263 005a 49       		.uleb128 0x49
+ 1264 005b 13       		.uleb128 0x13
+ 1265 005c 01       		.uleb128 0x1
+ 1266 005d 13       		.uleb128 0x13
+ 1267 005e 00       		.byte	0
+ 1268 005f 00       		.byte	0
+ 1269 0060 09       		.uleb128 0x9
+ 1270 0061 21       		.uleb128 0x21
+ 1271 0062 00       		.byte	0
+ 1272 0063 49       		.uleb128 0x49
+ 1273 0064 13       		.uleb128 0x13
+ 1274 0065 2F       		.uleb128 0x2f
+ 1275 0066 0B       		.uleb128 0xb
+ 1276 0067 00       		.byte	0
+ 1277 0068 00       		.byte	0
+ 1278 0069 0A       		.uleb128 0xa
+ 1279 006a 13       		.uleb128 0x13
+ 1280 006b 01       		.byte	0x1
+ 1281 006c 0B       		.uleb128 0xb
+ 1282 006d 0B       		.uleb128 0xb
+ 1283 006e 3A       		.uleb128 0x3a
+ 1284 006f 0B       		.uleb128 0xb
+ 1285 0070 3B       		.uleb128 0x3b
+ 1286 0071 05       		.uleb128 0x5
+ 1287 0072 01       		.uleb128 0x1
+ARM GAS  /tmp/ccEt37Uj.s 			page 31
+
+
+ 1288 0073 13       		.uleb128 0x13
+ 1289 0074 00       		.byte	0
+ 1290 0075 00       		.byte	0
+ 1291 0076 0B       		.uleb128 0xb
+ 1292 0077 0D       		.uleb128 0xd
+ 1293 0078 00       		.byte	0
+ 1294 0079 03       		.uleb128 0x3
+ 1295 007a 0E       		.uleb128 0xe
+ 1296 007b 3A       		.uleb128 0x3a
+ 1297 007c 0B       		.uleb128 0xb
+ 1298 007d 3B       		.uleb128 0x3b
+ 1299 007e 05       		.uleb128 0x5
+ 1300 007f 49       		.uleb128 0x49
+ 1301 0080 13       		.uleb128 0x13
+ 1302 0081 38       		.uleb128 0x38
+ 1303 0082 0A       		.uleb128 0xa
+ 1304 0083 00       		.byte	0
+ 1305 0084 00       		.byte	0
+ 1306 0085 0C       		.uleb128 0xc
+ 1307 0086 0D       		.uleb128 0xd
+ 1308 0087 00       		.byte	0
+ 1309 0088 03       		.uleb128 0x3
+ 1310 0089 08       		.uleb128 0x8
+ 1311 008a 3A       		.uleb128 0x3a
+ 1312 008b 0B       		.uleb128 0xb
+ 1313 008c 3B       		.uleb128 0x3b
+ 1314 008d 05       		.uleb128 0x5
+ 1315 008e 49       		.uleb128 0x49
+ 1316 008f 13       		.uleb128 0x13
+ 1317 0090 38       		.uleb128 0x38
+ 1318 0091 0A       		.uleb128 0xa
+ 1319 0092 00       		.byte	0
+ 1320 0093 00       		.byte	0
+ 1321 0094 0D       		.uleb128 0xd
+ 1322 0095 16       		.uleb128 0x16
+ 1323 0096 00       		.byte	0
+ 1324 0097 03       		.uleb128 0x3
+ 1325 0098 0E       		.uleb128 0xe
+ 1326 0099 3A       		.uleb128 0x3a
+ 1327 009a 0B       		.uleb128 0xb
+ 1328 009b 3B       		.uleb128 0x3b
+ 1329 009c 05       		.uleb128 0x5
+ 1330 009d 49       		.uleb128 0x49
+ 1331 009e 13       		.uleb128 0x13
+ 1332 009f 00       		.byte	0
+ 1333 00a0 00       		.byte	0
+ 1334 00a1 0E       		.uleb128 0xe
+ 1335 00a2 0F       		.uleb128 0xf
+ 1336 00a3 00       		.byte	0
+ 1337 00a4 0B       		.uleb128 0xb
+ 1338 00a5 0B       		.uleb128 0xb
+ 1339 00a6 49       		.uleb128 0x49
+ 1340 00a7 13       		.uleb128 0x13
+ 1341 00a8 00       		.byte	0
+ 1342 00a9 00       		.byte	0
+ 1343 00aa 0F       		.uleb128 0xf
+ 1344 00ab 2E       		.uleb128 0x2e
+ARM GAS  /tmp/ccEt37Uj.s 			page 32
+
+
+ 1345 00ac 01       		.byte	0x1
+ 1346 00ad 3F       		.uleb128 0x3f
+ 1347 00ae 0C       		.uleb128 0xc
+ 1348 00af 03       		.uleb128 0x3
+ 1349 00b0 0E       		.uleb128 0xe
+ 1350 00b1 3A       		.uleb128 0x3a
+ 1351 00b2 0B       		.uleb128 0xb
+ 1352 00b3 3B       		.uleb128 0x3b
+ 1353 00b4 0B       		.uleb128 0xb
+ 1354 00b5 27       		.uleb128 0x27
+ 1355 00b6 0C       		.uleb128 0xc
+ 1356 00b7 11       		.uleb128 0x11
+ 1357 00b8 01       		.uleb128 0x1
+ 1358 00b9 12       		.uleb128 0x12
+ 1359 00ba 01       		.uleb128 0x1
+ 1360 00bb 40       		.uleb128 0x40
+ 1361 00bc 06       		.uleb128 0x6
+ 1362 00bd 9742     		.uleb128 0x2117
+ 1363 00bf 0C       		.uleb128 0xc
+ 1364 00c0 01       		.uleb128 0x1
+ 1365 00c1 13       		.uleb128 0x13
+ 1366 00c2 00       		.byte	0
+ 1367 00c3 00       		.byte	0
+ 1368 00c4 10       		.uleb128 0x10
+ 1369 00c5 05       		.uleb128 0x5
+ 1370 00c6 00       		.byte	0
+ 1371 00c7 03       		.uleb128 0x3
+ 1372 00c8 0E       		.uleb128 0xe
+ 1373 00c9 3A       		.uleb128 0x3a
+ 1374 00ca 0B       		.uleb128 0xb
+ 1375 00cb 3B       		.uleb128 0x3b
+ 1376 00cc 0B       		.uleb128 0xb
+ 1377 00cd 49       		.uleb128 0x49
+ 1378 00ce 13       		.uleb128 0x13
+ 1379 00cf 02       		.uleb128 0x2
+ 1380 00d0 0A       		.uleb128 0xa
+ 1381 00d1 00       		.byte	0
+ 1382 00d2 00       		.byte	0
+ 1383 00d3 11       		.uleb128 0x11
+ 1384 00d4 2E       		.uleb128 0x2e
+ 1385 00d5 00       		.byte	0
+ 1386 00d6 3F       		.uleb128 0x3f
+ 1387 00d7 0C       		.uleb128 0xc
+ 1388 00d8 03       		.uleb128 0x3
+ 1389 00d9 0E       		.uleb128 0xe
+ 1390 00da 3A       		.uleb128 0x3a
+ 1391 00db 0B       		.uleb128 0xb
+ 1392 00dc 3B       		.uleb128 0x3b
+ 1393 00dd 0B       		.uleb128 0xb
+ 1394 00de 27       		.uleb128 0x27
+ 1395 00df 0C       		.uleb128 0xc
+ 1396 00e0 11       		.uleb128 0x11
+ 1397 00e1 01       		.uleb128 0x1
+ 1398 00e2 12       		.uleb128 0x12
+ 1399 00e3 01       		.uleb128 0x1
+ 1400 00e4 40       		.uleb128 0x40
+ 1401 00e5 0A       		.uleb128 0xa
+ARM GAS  /tmp/ccEt37Uj.s 			page 33
+
+
+ 1402 00e6 9742     		.uleb128 0x2117
+ 1403 00e8 0C       		.uleb128 0xc
+ 1404 00e9 00       		.byte	0
+ 1405 00ea 00       		.byte	0
+ 1406 00eb 12       		.uleb128 0x12
+ 1407 00ec 2E       		.uleb128 0x2e
+ 1408 00ed 01       		.byte	0x1
+ 1409 00ee 3F       		.uleb128 0x3f
+ 1410 00ef 0C       		.uleb128 0xc
+ 1411 00f0 03       		.uleb128 0x3
+ 1412 00f1 0E       		.uleb128 0xe
+ 1413 00f2 3A       		.uleb128 0x3a
+ 1414 00f3 0B       		.uleb128 0xb
+ 1415 00f4 3B       		.uleb128 0x3b
+ 1416 00f5 0B       		.uleb128 0xb
+ 1417 00f6 27       		.uleb128 0x27
+ 1418 00f7 0C       		.uleb128 0xc
+ 1419 00f8 11       		.uleb128 0x11
+ 1420 00f9 01       		.uleb128 0x1
+ 1421 00fa 12       		.uleb128 0x12
+ 1422 00fb 01       		.uleb128 0x1
+ 1423 00fc 40       		.uleb128 0x40
+ 1424 00fd 06       		.uleb128 0x6
+ 1425 00fe 9642     		.uleb128 0x2116
+ 1426 0100 0C       		.uleb128 0xc
+ 1427 0101 01       		.uleb128 0x1
+ 1428 0102 13       		.uleb128 0x13
+ 1429 0103 00       		.byte	0
+ 1430 0104 00       		.byte	0
+ 1431 0105 13       		.uleb128 0x13
+ 1432 0106 05       		.uleb128 0x5
+ 1433 0107 00       		.byte	0
+ 1434 0108 03       		.uleb128 0x3
+ 1435 0109 08       		.uleb128 0x8
+ 1436 010a 3A       		.uleb128 0x3a
+ 1437 010b 0B       		.uleb128 0xb
+ 1438 010c 3B       		.uleb128 0x3b
+ 1439 010d 0B       		.uleb128 0xb
+ 1440 010e 49       		.uleb128 0x49
+ 1441 010f 13       		.uleb128 0x13
+ 1442 0110 02       		.uleb128 0x2
+ 1443 0111 0A       		.uleb128 0xa
+ 1444 0112 00       		.byte	0
+ 1445 0113 00       		.byte	0
+ 1446 0114 14       		.uleb128 0x14
+ 1447 0115 2E       		.uleb128 0x2e
+ 1448 0116 00       		.byte	0
+ 1449 0117 3F       		.uleb128 0x3f
+ 1450 0118 0C       		.uleb128 0xc
+ 1451 0119 03       		.uleb128 0x3
+ 1452 011a 0E       		.uleb128 0xe
+ 1453 011b 3A       		.uleb128 0x3a
+ 1454 011c 0B       		.uleb128 0xb
+ 1455 011d 3B       		.uleb128 0x3b
+ 1456 011e 05       		.uleb128 0x5
+ 1457 011f 27       		.uleb128 0x27
+ 1458 0120 0C       		.uleb128 0xc
+ARM GAS  /tmp/ccEt37Uj.s 			page 34
+
+
+ 1459 0121 11       		.uleb128 0x11
+ 1460 0122 01       		.uleb128 0x1
+ 1461 0123 12       		.uleb128 0x12
+ 1462 0124 01       		.uleb128 0x1
+ 1463 0125 40       		.uleb128 0x40
+ 1464 0126 06       		.uleb128 0x6
+ 1465 0127 9642     		.uleb128 0x2116
+ 1466 0129 0C       		.uleb128 0xc
+ 1467 012a 00       		.byte	0
+ 1468 012b 00       		.byte	0
+ 1469 012c 15       		.uleb128 0x15
+ 1470 012d 2E       		.uleb128 0x2e
+ 1471 012e 01       		.byte	0x1
+ 1472 012f 3F       		.uleb128 0x3f
+ 1473 0130 0C       		.uleb128 0xc
+ 1474 0131 03       		.uleb128 0x3
+ 1475 0132 0E       		.uleb128 0xe
+ 1476 0133 3A       		.uleb128 0x3a
+ 1477 0134 0B       		.uleb128 0xb
+ 1478 0135 3B       		.uleb128 0x3b
+ 1479 0136 05       		.uleb128 0x5
+ 1480 0137 27       		.uleb128 0x27
+ 1481 0138 0C       		.uleb128 0xc
+ 1482 0139 49       		.uleb128 0x49
+ 1483 013a 13       		.uleb128 0x13
+ 1484 013b 11       		.uleb128 0x11
+ 1485 013c 01       		.uleb128 0x1
+ 1486 013d 12       		.uleb128 0x12
+ 1487 013e 01       		.uleb128 0x1
+ 1488 013f 40       		.uleb128 0x40
+ 1489 0140 06       		.uleb128 0x6
+ 1490 0141 9642     		.uleb128 0x2116
+ 1491 0143 0C       		.uleb128 0xc
+ 1492 0144 01       		.uleb128 0x1
+ 1493 0145 13       		.uleb128 0x13
+ 1494 0146 00       		.byte	0
+ 1495 0147 00       		.byte	0
+ 1496 0148 16       		.uleb128 0x16
+ 1497 0149 34       		.uleb128 0x34
+ 1498 014a 00       		.byte	0
+ 1499 014b 03       		.uleb128 0x3
+ 1500 014c 0E       		.uleb128 0xe
+ 1501 014d 3A       		.uleb128 0x3a
+ 1502 014e 0B       		.uleb128 0xb
+ 1503 014f 3B       		.uleb128 0x3b
+ 1504 0150 05       		.uleb128 0x5
+ 1505 0151 49       		.uleb128 0x49
+ 1506 0152 13       		.uleb128 0x13
+ 1507 0153 02       		.uleb128 0x2
+ 1508 0154 0A       		.uleb128 0xa
+ 1509 0155 00       		.byte	0
+ 1510 0156 00       		.byte	0
+ 1511 0157 17       		.uleb128 0x17
+ 1512 0158 2E       		.uleb128 0x2e
+ 1513 0159 00       		.byte	0
+ 1514 015a 3F       		.uleb128 0x3f
+ 1515 015b 0C       		.uleb128 0xc
+ARM GAS  /tmp/ccEt37Uj.s 			page 35
+
+
+ 1516 015c 03       		.uleb128 0x3
+ 1517 015d 0E       		.uleb128 0xe
+ 1518 015e 3A       		.uleb128 0x3a
+ 1519 015f 0B       		.uleb128 0xb
+ 1520 0160 3B       		.uleb128 0x3b
+ 1521 0161 05       		.uleb128 0x5
+ 1522 0162 27       		.uleb128 0x27
+ 1523 0163 0C       		.uleb128 0xc
+ 1524 0164 49       		.uleb128 0x49
+ 1525 0165 13       		.uleb128 0x13
+ 1526 0166 11       		.uleb128 0x11
+ 1527 0167 01       		.uleb128 0x1
+ 1528 0168 12       		.uleb128 0x12
+ 1529 0169 01       		.uleb128 0x1
+ 1530 016a 40       		.uleb128 0x40
+ 1531 016b 0A       		.uleb128 0xa
+ 1532 016c 9742     		.uleb128 0x2117
+ 1533 016e 0C       		.uleb128 0xc
+ 1534 016f 00       		.byte	0
+ 1535 0170 00       		.byte	0
+ 1536 0171 18       		.uleb128 0x18
+ 1537 0172 34       		.uleb128 0x34
+ 1538 0173 00       		.byte	0
+ 1539 0174 03       		.uleb128 0x3
+ 1540 0175 0E       		.uleb128 0xe
+ 1541 0176 3A       		.uleb128 0x3a
+ 1542 0177 0B       		.uleb128 0xb
+ 1543 0178 3B       		.uleb128 0x3b
+ 1544 0179 0B       		.uleb128 0xb
+ 1545 017a 49       		.uleb128 0x49
+ 1546 017b 13       		.uleb128 0x13
+ 1547 017c 3F       		.uleb128 0x3f
+ 1548 017d 0C       		.uleb128 0xc
+ 1549 017e 3C       		.uleb128 0x3c
+ 1550 017f 0C       		.uleb128 0xc
+ 1551 0180 00       		.byte	0
+ 1552 0181 00       		.byte	0
+ 1553 0182 19       		.uleb128 0x19
+ 1554 0183 21       		.uleb128 0x21
+ 1555 0184 00       		.byte	0
+ 1556 0185 00       		.byte	0
+ 1557 0186 00       		.byte	0
+ 1558 0187 1A       		.uleb128 0x1a
+ 1559 0188 34       		.uleb128 0x34
+ 1560 0189 00       		.byte	0
+ 1561 018a 03       		.uleb128 0x3
+ 1562 018b 0E       		.uleb128 0xe
+ 1563 018c 3A       		.uleb128 0x3a
+ 1564 018d 0B       		.uleb128 0xb
+ 1565 018e 3B       		.uleb128 0x3b
+ 1566 018f 0B       		.uleb128 0xb
+ 1567 0190 49       		.uleb128 0x49
+ 1568 0191 13       		.uleb128 0x13
+ 1569 0192 3F       		.uleb128 0x3f
+ 1570 0193 0C       		.uleb128 0xc
+ 1571 0194 02       		.uleb128 0x2
+ 1572 0195 0A       		.uleb128 0xa
+ARM GAS  /tmp/ccEt37Uj.s 			page 36
+
+
+ 1573 0196 00       		.byte	0
+ 1574 0197 00       		.byte	0
+ 1575 0198 00       		.byte	0
+ 1576              		.section	.debug_loc,"",%progbits
+ 1577              	.Ldebug_loc0:
+ 1578              	.LLST0:
+ 1579 0000 00000000 		.4byte	.LFB20
+ 1580 0004 02000000 		.4byte	.LCFI0
+ 1581 0008 0200     		.2byte	0x2
+ 1582 000a 7D       		.byte	0x7d
+ 1583 000b 00       		.sleb128 0
+ 1584 000c 02000000 		.4byte	.LCFI0
+ 1585 0010 28000000 		.4byte	.LFE20
+ 1586 0014 0200     		.2byte	0x2
+ 1587 0016 7D       		.byte	0x7d
+ 1588 0017 08       		.sleb128 8
+ 1589 0018 00000000 		.4byte	0
+ 1590 001c 00000000 		.4byte	0
+ 1591              	.LLST1:
+ 1592 0020 00000000 		.4byte	.LFB22
+ 1593 0024 02000000 		.4byte	.LCFI1
+ 1594 0028 0200     		.2byte	0x2
+ 1595 002a 7D       		.byte	0x7d
+ 1596 002b 00       		.sleb128 0
+ 1597 002c 02000000 		.4byte	.LCFI1
+ 1598 0030 04000000 		.4byte	.LCFI2
+ 1599 0034 0200     		.2byte	0x2
+ 1600 0036 7D       		.byte	0x7d
+ 1601 0037 04       		.sleb128 4
+ 1602 0038 04000000 		.4byte	.LCFI2
+ 1603 003c 34000000 		.4byte	.LFE22
+ 1604 0040 0200     		.2byte	0x2
+ 1605 0042 7D       		.byte	0x7d
+ 1606 0043 10       		.sleb128 16
+ 1607 0044 00000000 		.4byte	0
+ 1608 0048 00000000 		.4byte	0
+ 1609              	.LLST2:
+ 1610 004c 00000000 		.4byte	.LFB23
+ 1611 0050 02000000 		.4byte	.LCFI3
+ 1612 0054 0200     		.2byte	0x2
+ 1613 0056 7D       		.byte	0x7d
+ 1614 0057 00       		.sleb128 0
+ 1615 0058 02000000 		.4byte	.LCFI3
+ 1616 005c 0A000000 		.4byte	.LFE23
+ 1617 0060 0200     		.2byte	0x2
+ 1618 0062 7D       		.byte	0x7d
+ 1619 0063 08       		.sleb128 8
+ 1620 0064 00000000 		.4byte	0
+ 1621 0068 00000000 		.4byte	0
+ 1622              	.LLST3:
+ 1623 006c 00000000 		.4byte	.LFB24
+ 1624 0070 02000000 		.4byte	.LCFI4
+ 1625 0074 0200     		.2byte	0x2
+ 1626 0076 7D       		.byte	0x7d
+ 1627 0077 00       		.sleb128 0
+ 1628 0078 02000000 		.4byte	.LCFI4
+ 1629 007c 04000000 		.4byte	.LCFI5
+ARM GAS  /tmp/ccEt37Uj.s 			page 37
+
+
+ 1630 0080 0200     		.2byte	0x2
+ 1631 0082 7D       		.byte	0x7d
+ 1632 0083 08       		.sleb128 8
+ 1633 0084 04000000 		.4byte	.LCFI5
+ 1634 0088 E4000000 		.4byte	.LFE24
+ 1635 008c 0200     		.2byte	0x2
+ 1636 008e 7D       		.byte	0x7d
+ 1637 008f 10       		.sleb128 16
+ 1638 0090 00000000 		.4byte	0
+ 1639 0094 00000000 		.4byte	0
+ 1640              	.LLST4:
+ 1641 0098 00000000 		.4byte	.LFB25
+ 1642 009c 02000000 		.4byte	.LCFI6
+ 1643 00a0 0200     		.2byte	0x2
+ 1644 00a2 7D       		.byte	0x7d
+ 1645 00a3 00       		.sleb128 0
+ 1646 00a4 02000000 		.4byte	.LCFI6
+ 1647 00a8 04000000 		.4byte	.LCFI7
+ 1648 00ac 0200     		.2byte	0x2
+ 1649 00ae 7D       		.byte	0x7d
+ 1650 00af 04       		.sleb128 4
+ 1651 00b0 04000000 		.4byte	.LCFI7
+ 1652 00b4 44000000 		.4byte	.LFE25
+ 1653 00b8 0200     		.2byte	0x2
+ 1654 00ba 7D       		.byte	0x7d
+ 1655 00bb 10       		.sleb128 16
+ 1656 00bc 00000000 		.4byte	0
+ 1657 00c0 00000000 		.4byte	0
+ 1658              		.section	.debug_aranges,"",%progbits
+ 1659 0000 4C000000 		.4byte	0x4c
+ 1660 0004 0200     		.2byte	0x2
+ 1661 0006 00000000 		.4byte	.Ldebug_info0
+ 1662 000a 04       		.byte	0x4
+ 1663 000b 00       		.byte	0
+ 1664 000c 0000     		.2byte	0
+ 1665 000e 0000     		.2byte	0
+ 1666 0010 00000000 		.4byte	.LFB20
+ 1667 0014 28000000 		.4byte	.LFE20-.LFB20
+ 1668 0018 00000000 		.4byte	.LFB21
+ 1669 001c 00010000 		.4byte	.LFE21-.LFB21
+ 1670 0020 00000000 		.4byte	.LFB22
+ 1671 0024 34000000 		.4byte	.LFE22-.LFB22
+ 1672 0028 00000000 		.4byte	.LFB23
+ 1673 002c 0A000000 		.4byte	.LFE23-.LFB23
+ 1674 0030 00000000 		.4byte	.LFB24
+ 1675 0034 E4000000 		.4byte	.LFE24-.LFB24
+ 1676 0038 00000000 		.4byte	.LFB25
+ 1677 003c 44000000 		.4byte	.LFE25-.LFB25
+ 1678 0040 00000000 		.4byte	.LFB26
+ 1679 0044 0C000000 		.4byte	.LFE26-.LFB26
+ 1680 0048 00000000 		.4byte	0
+ 1681 004c 00000000 		.4byte	0
+ 1682              		.section	.debug_ranges,"",%progbits
+ 1683              	.Ldebug_ranges0:
+ 1684 0000 00000000 		.4byte	.LFB20
+ 1685 0004 28000000 		.4byte	.LFE20
+ 1686 0008 00000000 		.4byte	.LFB21
+ARM GAS  /tmp/ccEt37Uj.s 			page 38
+
+
+ 1687 000c 00010000 		.4byte	.LFE21
+ 1688 0010 00000000 		.4byte	.LFB22
+ 1689 0014 34000000 		.4byte	.LFE22
+ 1690 0018 00000000 		.4byte	.LFB23
+ 1691 001c 0A000000 		.4byte	.LFE23
+ 1692 0020 00000000 		.4byte	.LFB24
+ 1693 0024 E4000000 		.4byte	.LFE24
+ 1694 0028 00000000 		.4byte	.LFB25
+ 1695 002c 44000000 		.4byte	.LFE25
+ 1696 0030 00000000 		.4byte	.LFB26
+ 1697 0034 0C000000 		.4byte	.LFE26
+ 1698 0038 00000000 		.4byte	0
+ 1699 003c 00000000 		.4byte	0
+ 1700              		.section	.debug_line,"",%progbits
+ 1701              	.Ldebug_line0:
+ 1702 0000 CB010000 		.section	.debug_str,"MS",%progbits,1
+ 1702      0200FA00 
+ 1702      00000201 
+ 1702      FB0E0D00 
+ 1702      01010101 
+ 1703              	.LASF29:
+ 1704 0000 4750494F 		.ascii	"GPIO_TypeDef\000"
+ 1704      5F547970 
+ 1704      65446566 
+ 1704      00
+ 1705              	.LASF32:
+ 1706 000d 4368616E 		.ascii	"ChangeLed\000"
+ 1706      67654C65 
+ 1706      6400
+ 1707              	.LASF45:
+ 1708 0017 626C696E 		.ascii	"blink\000"
+ 1708      6B00
+ 1709              	.LASF51:
+ 1710 001d 6C617374 		.ascii	"last_voltage_cycle\000"
+ 1710      5F766F6C 
+ 1710      74616765 
+ 1710      5F637963 
+ 1710      6C6500
+ 1711              	.LASF41:
+ 1712 0030 74656D70 		.ascii	"temp\000"
+ 1712      00
+ 1713              	.LASF6:
+ 1714 0035 73686F72 		.ascii	"short int\000"
+ 1714      7420696E 
+ 1714      7400
+ 1715              	.LASF18:
+ 1716 003f 73697A65 		.ascii	"sizetype\000"
+ 1716      74797065 
+ 1716      00
+ 1717              	.LASF54:
+ 1718 0048 766F6C74 		.ascii	"voltage_peak\000"
+ 1718      6167655F 
+ 1718      7065616B 
+ 1718      00
+ 1719              	.LASF13:
+ 1720 0055 6C6F6E67 		.ascii	"long long int\000"
+ 1720      206C6F6E 
+ARM GAS  /tmp/ccEt37Uj.s 			page 39
+
+
+ 1720      6720696E 
+ 1720      7400
+ 1721              	.LASF11:
+ 1722 0063 5F5F7569 		.ascii	"__uint32_t\000"
+ 1722      6E743332 
+ 1722      5F7400
+ 1723              	.LASF8:
+ 1724 006e 5F5F7569 		.ascii	"__uint16_t\000"
+ 1724      6E743136 
+ 1724      5F7400
+ 1725              	.LASF33:
+ 1726 0079 57656C63 		.ascii	"WelcomeCodeFeatures\000"
+ 1726      6F6D6543 
+ 1726      6F646546 
+ 1726      65617475 
+ 1726      72657300 
+ 1727              	.LASF52:
+ 1728 008d 6C617374 		.ascii	"last_voltage_cycle_in_positive\000"
+ 1728      5F766F6C 
+ 1728      74616765 
+ 1728      5F637963 
+ 1728      6C655F69 
+ 1729              	.LASF43:
+ 1730 00ac 6164635F 		.ascii	"adc_ch\000"
+ 1730      636800
+ 1731              	.LASF28:
+ 1732 00b3 52455345 		.ascii	"RESERVED3\000"
+ 1732      52564544 
+ 1732      3300
+ 1733              	.LASF0:
+ 1734 00bd 53544152 		.ascii	"START_BLINKING\000"
+ 1734      545F424C 
+ 1734      494E4B49 
+ 1734      4E4700
+ 1735              	.LASF49:
+ 1736 00cc 696E7465 		.ascii	"integrate_voltage\000"
+ 1736      67726174 
+ 1736      655F766F 
+ 1736      6C746167 
+ 1736      6500
+ 1737              	.LASF20:
+ 1738 00de 4F545950 		.ascii	"OTYPER\000"
+ 1738      455200
+ 1739              	.LASF5:
+ 1740 00e5 7369676E 		.ascii	"signed char\000"
+ 1740      65642063 
+ 1740      68617200 
+ 1741              	.LASF37:
+ 1742 00f1 6E65775F 		.ascii	"new_data\000"
+ 1742      64617461 
+ 1742      00
+ 1743              	.LASF7:
+ 1744 00fa 6C65645F 		.ascii	"led_state_t\000"
+ 1744      73746174 
+ 1744      655F7400 
+ 1745              	.LASF23:
+ 1746 0106 50555044 		.ascii	"PUPDR\000"
+ARM GAS  /tmp/ccEt37Uj.s 			page 40
+
+
+ 1746      5200
+ 1747              	.LASF10:
+ 1748 010c 6C6F6E67 		.ascii	"long int\000"
+ 1748      20696E74 
+ 1748      00
+ 1749              	.LASF38:
+ 1750 0115 766F6C74 		.ascii	"voltage\000"
+ 1750      61676500 
+ 1751              	.LASF26:
+ 1752 011d 42535252 		.ascii	"BSRR\000"
+ 1752      00
+ 1753              	.LASF19:
+ 1754 0122 4D4F4445 		.ascii	"MODER\000"
+ 1754      5200
+ 1755              	.LASF1:
+ 1756 0128 57414954 		.ascii	"WAIT_TO_OFF\000"
+ 1756      5F544F5F 
+ 1756      4F464600 
+ 1757              	.LASF30:
+ 1758 0134 6C6F6E67 		.ascii	"long double\000"
+ 1758      20646F75 
+ 1758      626C6500 
+ 1759              	.LASF4:
+ 1760 0140 756E7369 		.ascii	"unsigned char\000"
+ 1760      676E6564 
+ 1760      20636861 
+ 1760      7200
+ 1761              	.LASF56:
+ 1762 014e 7372632F 		.ascii	"src/hard.c\000"
+ 1762      68617264 
+ 1762      2E6300
+ 1763              	.LASF34:
+ 1764 0159 686F775F 		.ascii	"how_many\000"
+ 1764      6D616E79 
+ 1764      00
+ 1765              	.LASF14:
+ 1766 0162 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1766      206C6F6E 
+ 1766      6720756E 
+ 1766      7369676E 
+ 1766      65642069 
+ 1767              	.LASF17:
+ 1768 0179 75696E74 		.ascii	"uint32_t\000"
+ 1768      33325F74 
+ 1768      00
+ 1769              	.LASF15:
+ 1770 0182 756E7369 		.ascii	"unsigned int\000"
+ 1770      676E6564 
+ 1770      20696E74 
+ 1770      00
+ 1771              	.LASF16:
+ 1772 018f 75696E74 		.ascii	"uint16_t\000"
+ 1772      31365F74 
+ 1772      00
+ 1773              	.LASF48:
+ 1774 0198 6C617374 		.ascii	"last_voltage_was_high\000"
+ 1774      5F766F6C 
+ARM GAS  /tmp/ccEt37Uj.s 			page 41
+
+
+ 1774      74616765 
+ 1774      5F776173 
+ 1774      5F686967 
+ 1775              	.LASF36:
+ 1776 01ae 48617264 		.ascii	"Hard_Reset_Voltage_Filter\000"
+ 1776      5F526573 
+ 1776      65745F56 
+ 1776      6F6C7461 
+ 1776      67655F46 
+ 1777              	.LASF57:
+ 1778 01c8 2F686F6D 		.ascii	"/home/med/Documents/stm32_proj/emacs_dexel_pfc\000"
+ 1778      652F6D65 
+ 1778      642F446F 
+ 1778      63756D65 
+ 1778      6E74732F 
+ 1779              	.LASF31:
+ 1780 01f7 63686172 		.ascii	"char\000"
+ 1780      00
+ 1781              	.LASF39:
+ 1782 01fc 48617264 		.ascii	"Hard_Update_Voltage_Sense\000"
+ 1782      5F557064 
+ 1782      6174655F 
+ 1782      566F6C74 
+ 1782      6167655F 
+ 1783              	.LASF9:
+ 1784 0216 73686F72 		.ascii	"short unsigned int\000"
+ 1784      7420756E 
+ 1784      7369676E 
+ 1784      65642069 
+ 1784      6E7400
+ 1785              	.LASF35:
+ 1786 0229 55706461 		.ascii	"UpdateLed\000"
+ 1786      74654C65 
+ 1786      6400
+ 1787              	.LASF40:
+ 1788 0233 48617264 		.ascii	"Hard_Get_Conduction_Angle\000"
+ 1788      5F476574 
+ 1788      5F436F6E 
+ 1788      64756374 
+ 1788      696F6E5F 
+ 1789              	.LASF21:
+ 1790 024d 52455345 		.ascii	"RESERVED0\000"
+ 1790      52564544 
+ 1790      3000
+ 1791              	.LASF24:
+ 1792 0257 52455345 		.ascii	"RESERVED1\000"
+ 1792      52564544 
+ 1792      3100
+ 1793              	.LASF25:
+ 1794 0261 52455345 		.ascii	"RESERVED2\000"
+ 1794      52564544 
+ 1794      3200
+ 1795              	.LASF22:
+ 1796 026b 4F535045 		.ascii	"OSPEEDR\000"
+ 1796      45445200 
+ 1797              	.LASF53:
+ 1798 0273 6C617374 		.ascii	"last_voltage_peak\000"
+ARM GAS  /tmp/ccEt37Uj.s 			page 42
+
+
+ 1798      5F766F6C 
+ 1798      74616765 
+ 1798      5F706561 
+ 1798      6B00
+ 1799              	.LASF12:
+ 1800 0285 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1800      20756E73 
+ 1800      69676E65 
+ 1800      6420696E 
+ 1800      7400
+ 1801              	.LASF3:
+ 1802 0297 57414954 		.ascii	"WAIT_NEW_CYCLE\000"
+ 1802      5F4E4557 
+ 1802      5F435943 
+ 1802      4C4500
+ 1803              	.LASF42:
+ 1804 02a6 74696D65 		.ascii	"timer_led\000"
+ 1804      725F6C65 
+ 1804      6400
+ 1805              	.LASF47:
+ 1806 02b0 68617264 		.ascii	"hard_filter_index\000"
+ 1806      5F66696C 
+ 1806      7465725F 
+ 1806      696E6465 
+ 1806      7800
+ 1807              	.LASF44:
+ 1808 02c2 6C65645F 		.ascii	"led_state\000"
+ 1808      73746174 
+ 1808      6500
+ 1809              	.LASF46:
+ 1810 02cc 686F775F 		.ascii	"how_many_blinks\000"
+ 1810      6D616E79 
+ 1810      5F626C69 
+ 1810      6E6B7300 
+ 1811              	.LASF2:
+ 1812 02dc 57414954 		.ascii	"WAIT_TO_ON\000"
+ 1812      5F544F5F 
+ 1812      4F4E00
+ 1813              	.LASF50:
+ 1814 02e7 696E7465 		.ascii	"integrate_voltage_in_positive\000"
+ 1814      67726174 
+ 1814      655F766F 
+ 1814      6C746167 
+ 1814      655F696E 
+ 1815              	.LASF55:
+ 1816 0305 474E5520 		.ascii	"GNU C11 5.2.1 20151202 (release) [ARM/embedded-5-br"
+ 1816      43313120 
+ 1816      352E322E 
+ 1816      31203230 
+ 1816      31353132 
+ 1817 0338 616E6368 		.ascii	"anch revision 231848] -mcpu=cortex-m0 -mthumb -g -g"
+ 1817      20726576 
+ 1817      6973696F 
+ 1817      6E203233 
+ 1817      31383438 
+ 1818 036b 64776172 		.ascii	"dwarf-2 -O0 -fomit-frame-pointer -fdata-sections -f"
+ 1818      662D3220 
+ARM GAS  /tmp/ccEt37Uj.s 			page 43
+
+
+ 1818      2D4F3020 
+ 1818      2D666F6D 
+ 1818      69742D66 
+ 1819 039e 66756E63 		.ascii	"function-sections\000"
+ 1819      74696F6E 
+ 1819      2D736563 
+ 1819      74696F6E 
+ 1819      7300
+ 1820              	.LASF58:
+ 1821 03b0 48617264 		.ascii	"Hard_Get_Hidden_Value\000"
+ 1821      5F476574 
+ 1821      5F486964 
+ 1821      64656E5F 
+ 1821      56616C75 
+ 1822              	.LASF27:
+ 1823 03c6 4C434B52 		.ascii	"LCKR\000"
+ 1823      00
+ 1824              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.2.1 20151202 (release) [ARM/embedded-5-bran
+ARM GAS  /tmp/ccEt37Uj.s 			page 44
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 hard.c
+     /tmp/ccEt37Uj.s:57     .bss.led_state:00000000 led_state
+     /tmp/ccEt37Uj.s:58     .bss.led_state:00000000 $d
+     /tmp/ccEt37Uj.s:63     .bss.blink:00000000 blink
+     /tmp/ccEt37Uj.s:64     .bss.blink:00000000 $d
+     /tmp/ccEt37Uj.s:69     .bss.how_many_blinks:00000000 how_many_blinks
+     /tmp/ccEt37Uj.s:70     .bss.how_many_blinks:00000000 $d
+     /tmp/ccEt37Uj.s:75     .bss.hard_filter_index:00000000 hard_filter_index
+     /tmp/ccEt37Uj.s:76     .bss.hard_filter_index:00000000 $d
+     /tmp/ccEt37Uj.s:81     .bss.last_voltage_was_high:00000000 last_voltage_was_high
+     /tmp/ccEt37Uj.s:82     .bss.last_voltage_was_high:00000000 $d
+     /tmp/ccEt37Uj.s:88     .bss.integrate_voltage:00000000 integrate_voltage
+     /tmp/ccEt37Uj.s:85     .bss.integrate_voltage:00000000 $d
+     /tmp/ccEt37Uj.s:95     .bss.integrate_voltage_in_positive:00000000 integrate_voltage_in_positive
+     /tmp/ccEt37Uj.s:92     .bss.integrate_voltage_in_positive:00000000 $d
+     /tmp/ccEt37Uj.s:102    .bss.last_voltage_cycle:00000000 last_voltage_cycle
+     /tmp/ccEt37Uj.s:99     .bss.last_voltage_cycle:00000000 $d
+     /tmp/ccEt37Uj.s:109    .bss.last_voltage_cycle_in_positive:00000000 last_voltage_cycle_in_positive
+     /tmp/ccEt37Uj.s:106    .bss.last_voltage_cycle_in_positive:00000000 $d
+     /tmp/ccEt37Uj.s:116    .bss.last_voltage_peak:00000000 last_voltage_peak
+     /tmp/ccEt37Uj.s:113    .bss.last_voltage_peak:00000000 $d
+     /tmp/ccEt37Uj.s:123    .bss.voltage_peak:00000000 voltage_peak
+     /tmp/ccEt37Uj.s:120    .bss.voltage_peak:00000000 $d
+     /tmp/ccEt37Uj.s:126    .text.ChangeLed:00000000 $t
+     /tmp/ccEt37Uj.s:131    .text.ChangeLed:00000000 ChangeLed
+     /tmp/ccEt37Uj.s:161    .text.ChangeLed:00000020 $d
+     /tmp/ccEt37Uj.s:167    .text.UpdateLed:00000000 $t
+     /tmp/ccEt37Uj.s:172    .text.UpdateLed:00000000 UpdateLed
+     /tmp/ccEt37Uj.s:344    .text.UpdateLed:000000f0 $d
+     /tmp/ccEt37Uj.s:352    .rodata:00000000 $d
+     /tmp/ccEt37Uj.s:362    .text.WelcomeCodeFeatures:00000000 $t
+     /tmp/ccEt37Uj.s:367    .text.WelcomeCodeFeatures:00000000 WelcomeCodeFeatures
+     /tmp/ccEt37Uj.s:400    .text.WelcomeCodeFeatures:00000028 $d
+     /tmp/ccEt37Uj.s:407    .text.Hard_Reset_Voltage_Filter:00000000 $t
+     /tmp/ccEt37Uj.s:412    .text.Hard_Reset_Voltage_Filter:00000000 Hard_Reset_Voltage_Filter
+     /tmp/ccEt37Uj.s:431    .text.Hard_Update_Voltage_Sense:00000000 $t
+     /tmp/ccEt37Uj.s:436    .text.Hard_Update_Voltage_Sense:00000000 Hard_Update_Voltage_Sense
+     /tmp/ccEt37Uj.s:571    .text.Hard_Update_Voltage_Sense:000000c4 $d
+     /tmp/ccEt37Uj.s:584    .text.Hard_Get_Conduction_Angle:00000000 $t
+     /tmp/ccEt37Uj.s:589    .text.Hard_Get_Conduction_Angle:00000000 Hard_Get_Conduction_Angle
+     /tmp/ccEt37Uj.s:638    .text.Hard_Get_Conduction_Angle:0000003c $d
+     /tmp/ccEt37Uj.s:644    .text.Hard_Get_Hidden_Value:00000000 $t
+     /tmp/ccEt37Uj.s:649    .text.Hard_Get_Hidden_Value:00000000 Hard_Get_Hidden_Value
+     /tmp/ccEt37Uj.s:663    .text.Hard_Get_Hidden_Value:00000008 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+timer_led
+sprintf
+Usart1Send
+Wait_ms
+MA8Circular_Reset
+MA8Circular
+adc_ch
+__aeabi_uidiv

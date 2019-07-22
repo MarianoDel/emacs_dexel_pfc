@@ -1,5 +1,5 @@
 //-----------------------------------------------------
-// #### D100W PROJECT  F030 - Custom Board ####
+// #### PFC 150W PROJECT  F030 - Custom Board ####
 // ##
 // ## @Author: Med
 // ## @Editor: Emacs - ggtags
@@ -68,7 +68,37 @@ volatile unsigned short timer_standby;
 volatile unsigned char timer_filters = 0;
 // volatile unsigned short dmax_permited = 0;
 
+#ifdef HARD_TEST_MODE_RECT_SINUSOIDAL
+#define USE_SIGNAL_CURRENT_SIN_1_A
+#define SIZEOF_SIGNAL 240
 
+unsigned short mem_signal [SIZEOF_SIGNAL] = {13,26,39,52,65,78,91,104,117,130,
+                                             143,156,169,182,195,207,220,233,246,258,
+                                             271,284,296,309,321,333,346,358,370,382,
+                                             394,406,418,430,442,453,465,477,488,499,
+                                             511,522,533,544,555,566,577,587,598,608,
+                                             619,629,639,649,659,669,678,688,697,707,
+                                             716,725,734,743,751,760,768,777,785,793,
+                                             801,809,816,824,831,838,845,852,859,866,
+                                             872,878,884,891,896,902,908,913,918,923,
+                                             928,933,938,942,946,951,955,958,962,965,
+                                             969,972,975,978,980,983,985,987,989,991,
+                                             993,994,995,996,997,998,999,999,999,1000,
+                                             999,999,999,998,997,996,995,994,993,991,
+                                             989,987,985,983,980,978,975,972,969,965,
+                                             962,958,955,951,946,942,938,933,928,923,
+                                             918,913,908,902,896,891,884,878,872,866,
+                                             859,852,845,838,831,824,816,809,801,793,
+                                             785,777,768,760,751,743,734,725,716,707,
+                                             697,688,678,669,659,649,639,629,619,608,
+                                             598,587,577,566,555,544,533,522,511,499,
+                                             488,477,465,453,442,430,418,406,394,382,
+                                             370,358,346,333,321,309,296,284,271,258,
+                                             246,233,220,207,195,182,169,156,143,130,
+                                             117,104,91,78,65,52,39,26,13,0};
+#endif
+
+unsigned short * p_signal;
 
 // Module Functions ----------------------------------------
 void TimingDelay_Decrement (void);
@@ -136,6 +166,35 @@ int main(void)
     ADC1->CR |= ADC_CR_ADSTART;
     //end of ADC & DMA
 
+#ifdef HARD_TEST_MODE_RECT_SINUSOIDAL
+    p_signal = mem_signal;
+
+    while (1)
+    {
+        if (sequence_ready)
+        {
+            sequence_ready_reset;
+            //aca la senial (el ultimo punto) termina en 0
+            if (p_signal < &mem_signal[(SIZEOF_SIGNAL - 1)])
+            {
+                p_signal++;
+            }
+            else
+            {
+                p_signal = mem_signal;
+#ifdef USE_LED_FOR_SIGNAL
+                if (LED)
+                    LED_OFF;
+                else
+                    LED_ON;
+#endif
+            }
+            CTRL_MOSFET(DUTY_100_PERCENT - *p_signal);
+        }
+    }
+#endif    // HARD_TEST_MODE_RECT_SINUSOIDAL
+
+    
 #ifdef HARD_TEST_MODE_CONDUCTION_ANGLE
     Hard_Reset_Voltage_Filter();
     
@@ -155,7 +214,7 @@ int main(void)
             }
         }
     }
-#endif
+#endif    // HARD_TEST_MODE_CONDUCTION_ANGLE
 
 #ifdef HARD_TEST_MODE_LINE_SYNC
     Hard_Reset_Voltage_Filter();

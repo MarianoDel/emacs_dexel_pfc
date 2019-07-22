@@ -62,25 +62,25 @@ UDEFS =
 UADEFS =
 
 # List C source files here
-LIBSDIR    = ../STM32F0xx_StdPeriph_Lib_V1.3.1/Libraries/STM32F0xx_StdPeriph_Driver
+# LIBSDIR    = ../STM32F0xx_StdPeriph_Lib_V1.3.1/Libraries/STM32F0xx_StdPeriph_Driver
+# LIBSDIR    = 
 CORELIBDIR = ./cmsis_core
-DEVDIR  =	./cmsis_boot
+BOOTDIR = ./cmsis_boot
 
 
-STMSPDDIR    = ./stm_lib
-
-STMSPSRCDDIR = $(LIBSDIR)/src
-STMSPINCDDIR = $(LIBSDIR)/inc
-#STMSPSRCDDIR = $(STMSPDDIR)/src
-#STMSPINCDDIR = $(STMSPDDIR)/inc
+# STMSPDDIR    = ./stm_lib
+# STMSPSRCDDIR = $(LIBSDIR)/src
+# STMSPINCDDIR = $(LIBSDIR)/inc
+# STMSPSRCDDIR = $(STMSPDDIR)/src
+# STMSPINCDDIR = $(STMSPDDIR)/inc
 
 #DISCOVERY    = ../STM32F0-Discovery_FW_V1.0.0/Utilities/STM32F0-Discovery
 
 LINKER = ./cmsis_boot/startup
 
 SRC  = ./src/main.c
-SRC += $(DEVDIR)/system_stm32f0xx.c
-SRC += $(DEVDIR)/syscalls/syscalls.c
+SRC += $(BOOTDIR)/system_stm32f0xx.c
+SRC += $(BOOTDIR)/syscalls/syscalls.c
 
 SRC += ./src/adc.c
 SRC += ./src/dsp.c
@@ -107,12 +107,8 @@ SRC += $(CORELIBDIR)/core_cm0.c
 ASRC = ./cmsis_boot/startup/startup_stm32f0xx.s
 
 # List all user directories here
-UINCDIR = $(DEVDIR) \
+UINCDIR = $(BOOTDIR) \
           $(CORELIBDIR) \
-          $(STMSPINCDDIR) \
-          $(DISCOVERY)    \
-          ./inc  \
-          ./cmsis_boot
 			 #../paho.mqtt.embedded-c/MQTTPacket/src
 
 # List the user directory to look for the libraries here

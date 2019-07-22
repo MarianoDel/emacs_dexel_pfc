@@ -73,8 +73,8 @@ void GPIO_Config (void)
     GPIOA->MODER = temp;    
 #endif
     temp = GPIOA->OTYPER;	//1 bit por pin
-    temp &= 0xFFFFFFBF;         //PA6 open drain
-    temp |= 0x00000040;
+    temp &= 0xFFFFFFFF;         //
+    temp |= 0x00000000;
     GPIOA->OTYPER = temp;
 
     temp = GPIOA->OSPEEDR;	//2 bits por pin

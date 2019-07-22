@@ -46,16 +46,18 @@
 
 // SOFTWARE Features -------------------------
 //-- Types of programs ----------
-#define DRIVER_MODE
+// #define DRIVER_MODE
 // #define HARD_TEST_MODE
 // #define HARD_TEST_MODE_LINE_SYNC
 // #define HARD_TEST_MODE_CONDUCTION_ANGLE
+#define HARD_TEST_MODE_RECT_SINUSOIDAL
 
 //-- Types of led indications ----------
 // #define USE_LED_FOR_MAIN_STATES
-#define USE_LED_FOR_MAINS_SYNC
+// #define USE_LED_FOR_MAINS_SYNC
 // #define USE_LED_FOR_POSITIVE_VOLTAGE
 // #define USE_LED_AS_TIM1_CH3
+#define USE_LED_FOR_SIGNAL
 
 //-- Frequency selection ----------
 // #define USE_FREQ_70KHZ    //max pwm: 686
