@@ -14,18 +14,16 @@
 //--- Hardware Board Version -------------------------------
 #define VER_1_0    //version original
 
-#define V_SETPOINT    VOUT_35V
+#define VOUT_SETPOINT    VOUT_200V
 #define I_SETPOINT    IOUT_3A
 
 #define VBIAS_HIGH    VBIAS_25V
 #define VBIAS_LOW     VBIAS_08V
 #define VBIAS_START   VBIAS_10V
 
-#define VOUT_HIGH    VOUT_35V
-
-#define VLINE_START_THRESHOLD    VLINE_180V
-#define VOLTAGE_MAX_THRESHOLD    100
-#define VOLTAGE_MIN_THRESHOLD    50
+#define VLINE_START_THRESHOLD    VLINE_20V
+// #define VOUT_MAX_THRESHOLD    VOUT_200V
+// #define VOUT_MIN_THRESHOLD    VOUT_200V
 
 
 //--- Configuration for Hardware Versions ------------------
@@ -46,19 +44,19 @@
 
 // SOFTWARE Features -------------------------
 //-- Types of programs ----------
-// #define DRIVER_MODE
+#define DRIVER_MODE
 // #define HARD_TEST_MODE
 // #define HARD_TEST_MODE_LINE_SYNC
 // #define HARD_TEST_MODE_CONDUCTION_ANGLE
 // #define HARD_TEST_MODE_RECT_SINUSOIDAL
 // #define HARD_TEST_MODE_DISABLE_PWM
-#define HARD_TEST_MODE_ADC_SENSE
+// #define HARD_TEST_MODE_ADC_SENSE
 
 //-- Types of led indications ----------
-// #define USE_LED_FOR_MAIN_STATES
+#define USE_LED_FOR_MAIN_STATES
 // #define USE_LED_FOR_MAINS_SYNC
 // #define USE_LED_FOR_POSITIVE_VOLTAGE
-#define USE_LED_AS_TIM1_CH3
+// #define USE_LED_AS_TIM1_CH3
 // #define USE_LED_FOR_SIGNAL
 
 //-- Frequency selection ----------
@@ -111,7 +109,11 @@
 #define VBIAS_08V    223
 //bias @12V 1.14V -> 346  ;;medido 5-7-19
 
-#define VOUT_35V    521    
+#define VOUT_100V    230
+#define VOUT_200V    460
+#define VOUT_300V    692
+#define VOUT_350V    805
+#define VOUT_400V    920    
 
 #if defined OPTO_KB817
 #define IOUT_3A    610
@@ -126,9 +128,9 @@
 #error "define the opto in hard.h"
 #endif
 
-#define VLINE_180V    639
-#define VLINE_220V    782
-//V220_Sense @311Vp 2.52Vp -> 782    ;;medido 5-7-2019
+#define VLINE_20V    55
+
+
 
 #if (defined USE_FREQ_70KHZ)
 #define SOFT_START_CNT_ROOF    140

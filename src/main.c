@@ -157,7 +157,7 @@ int main(void)
     // TIM_17_Init();    //with int, tick: 1us
     MA32Circular_Reset();
     
-    CTRL_MOSFET(DUTY_NONE);
+    CTRL_MOSFET_COMP(DUTY_NONE);
     
     //ADC and DMA configuration
     AdcConfig();
@@ -167,7 +167,7 @@ int main(void)
     //end of ADC & DMA
 
 #ifdef HARD_TEST_MODE_DISABLE_PWM
-    CTRL_MOSFET(DUTY_100_PERCENT);
+    CTRL_MOSFET_COMP(DUTY_NONE);
     while (1);
 #endif
     
@@ -194,14 +194,14 @@ int main(void)
                     LED_ON;
 #endif
             }
-            CTRL_MOSFET(DUTY_100_PERCENT - *p_signal);
+            CTRL_MOSFET_COMP(*p_signal);
         }
     }
 #endif    // HARD_TEST_MODE_RECT_SINUSOIDAL
 
 #ifdef HARD_TEST_MODE_ADC_SENSE
     //disable pwm
-    CTRL_MOSFET(DUTY_100_PERCENT);
+    CTRL_MOSFET_COMP(DUTY_NONE);
     
     while (1)
     {
@@ -276,16 +276,14 @@ int main(void)
     
     //--- Production Program ----------
 #ifdef DRIVER_MODE
-    Hard_Reset_Voltage_Filter();
+    CTRL_MOSFET_COMP(DUTY_NONE);
     
     while (1)
     {
         switch (driver_state)
         {
         case POWER_UP:
-            //TODO: revisar tambien 220V
-            // if ((Vbias_Sense > VBIAS_START) && (Vline_Sense > VLINE_START_THRESHOLD))
-            if (Vbias_Sense > VBIAS_START)
+            if (Vline_Sense > VLINE_START_THRESHOLD)
                 driver_state = SOFT_START;
             
             break;
@@ -296,45 +294,36 @@ int main(void)
                 sequence_ready_reset;
                 soft_start_cnt++;
 
-                //reviso no pasarme de corriente de salida
-                if (Iup < I_SETPOINT)
+                //reviso no pasarme de tension
+                if (Vout_Sense < VOUT_SETPOINT)
                 {
-                    //reviso no pasarme de tension
-                    if (Vup < V_SETPOINT)
+                    //hago un soft start respecto de la corriente y/o tension de salida
+                    if (soft_start_cnt > SOFT_START_CNT_ROOF)    //update cada 2ms aprox.
                     {
-                        //hago un soft start respecto de la corriente y/o tension de salida
-                        if (soft_start_cnt > SOFT_START_CNT_ROOF)    //update cada 2ms aprox.
-                        {
-                            soft_start_cnt = 0;
+                        soft_start_cnt = 0;
                     
-                            if (d < DUTY_FOR_DMAX)
-                            {
-                                d++;
-                                CTRL_MOSFET(d);
-                            }
-                            else
-                            {
-                                ChangeLed(LED_VOLTAGE_MODE);
-                                driver_state = VOLTAGE_MODE;
-                            }
+                        if (d < DUTY_FOR_DMAX)
+                        {
+                            d++;
+                            CTRL_MOSFET_COMP(d);
+                        }
+                        else
+                        {
+                            ChangeLed(LED_VOLTAGE_MODE);
+                            driver_state = VOLTAGE_MODE;
                         }
                     }
-                    else
-                    {
-                        ChangeLed(LED_VOLTAGE_MODE);
-                        driver_state = VOLTAGE_MODE;
-                    }
-                }                    
+                }
                 else
                 {
-                    ChangeLed(LED_CURRENT_MODE);
-                    driver_state = CURRENT_MODE;
+                    ChangeLed(LED_VOLTAGE_MODE);
+                    driver_state = VOLTAGE_MODE;
                 }
             }
             break;
 
         case AUTO_RESTART:
-            CTRL_MOSFET(DUTY_NONE);
+            CTRL_MOSFET_COMP(DUTY_NONE);
             d = 0;
             ez1 = 0;
             ez2 = 0;
@@ -347,58 +336,16 @@ int main(void)
             {
                 sequence_ready_reset;
 
-                //reviso cambio de modo
-                if (Iup < I_SETPOINT)   
-                {                
-                    d = PID_roof (V_SETPOINT, Vup, d, &ez1, &ez2);
-                    if (d > 0)    //d puede tomar valores negativos
-                    {
-                        if (d > DUTY_FOR_DMAX)
-                            d = DUTY_FOR_DMAX;
-                    }
-                    else
-                        d = DUTY_NONE;
-
-                    CTRL_MOSFET(d);
-                }
-                else     //cambio a lazo I
+                d = PID_roof (VOUT_SETPOINT, Vout_Sense, d, &ez1, &ez2);
+                if (d > 0)    //d puede tomar valores negativos
                 {
-                    ChangeLed(LED_CURRENT_MODE);
-                    driver_state = CURRENT_MODE;
+                    if (d > DUTY_FOR_DMAX)
+                        d = DUTY_FOR_DMAX;
                 }
+                else
+                    d = DUTY_NONE;
 
-                if (Hard_Update_Voltage_Sense())
-                    CTRL_LED(Hard_Get_Conduction_Angle());
-            }
-            break;
-
-        case CURRENT_MODE:
-            if (sequence_ready)
-            {
-                sequence_ready_reset;
-
-                //reviso cambio de modo
-                if (Vup < V_SETPOINT)   
-                {                
-                    d = PID_roof (I_SETPOINT, Iup, d, &ez1, &ez2);
-                    if (d > 0)    //d puede tomar valores negativos
-                    {
-                        if (d > DUTY_FOR_DMAX)
-                            d = DUTY_FOR_DMAX;
-                    }
-                    else
-                        d = DUTY_NONE;
-
-                    CTRL_MOSFET(d);
-                }
-                else     //cambio a lazo V
-                {
-                    ChangeLed(LED_VOLTAGE_MODE);
-                    driver_state = VOLTAGE_MODE;
-                }
-
-                if (Hard_Update_Voltage_Sense())
-                    CTRL_LED(Hard_Get_Conduction_Angle());
+                CTRL_MOSFET_COMP(d);
             }
             break;
             

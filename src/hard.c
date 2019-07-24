@@ -327,62 +327,62 @@ void Hard_Reset_Voltage_Filter (void)
     MA8Circular_Reset();
 }
 
-unsigned char Hard_Update_Voltage_Sense (void)
-{
-    unsigned char new_data = 0;
-    unsigned short voltage = 0;
+// unsigned char Hard_Update_Voltage_Sense (void)
+// {
+//     unsigned char new_data = 0;
+//     unsigned short voltage = 0;
     
-    voltage = MA8Circular(Vline_Sense);
+//     voltage = MA8Circular(Vline_Sense);
 
-// #ifdef USE_LED_AS_TIM1_CH3
-//     CTRL_LED(voltage);
+// // #ifdef USE_LED_AS_TIM1_CH3
+// //     CTRL_LED(voltage);
+// // #endif
+//     if (voltage > VOLTAGE_MAX_THRESHOLD)
+//     {
+//         last_voltage_was_high = 1;
+//         integrate_voltage++;
+//         integrate_voltage_in_positive++;
+
+//         //busco el pico de tension
+//         if (voltage > voltage_peak)
+//             voltage_peak = voltage;
+
+// #ifdef USE_LED_FOR_POSITIVE_VOLTAGE
+//         LED_ON;
 // #endif
-    if (voltage > VOLTAGE_MAX_THRESHOLD)
-    {
-        last_voltage_was_high = 1;
-        integrate_voltage++;
-        integrate_voltage_in_positive++;
-
-        //busco el pico de tension
-        if (voltage > voltage_peak)
-            voltage_peak = voltage;
-
-#ifdef USE_LED_FOR_POSITIVE_VOLTAGE
-        LED_ON;
-#endif
-    }
-    else if ((voltage < VOLTAGE_MIN_THRESHOLD) && (last_voltage_was_high))
-    {
-        //flanco descendente
-        last_voltage_cycle = integrate_voltage;
-        last_voltage_cycle_in_positive = integrate_voltage_in_positive;
-        last_voltage_peak = voltage_peak;
-        integrate_voltage = 1;
-        integrate_voltage_in_positive = 0;
-        voltage_peak = 0;
-        last_voltage_was_high = 0;
-        new_data = 1;
+//     }
+//     else if ((voltage < VOLTAGE_MIN_THRESHOLD) && (last_voltage_was_high))
+//     {
+//         //flanco descendente
+//         last_voltage_cycle = integrate_voltage;
+//         last_voltage_cycle_in_positive = integrate_voltage_in_positive;
+//         last_voltage_peak = voltage_peak;
+//         integrate_voltage = 1;
+//         integrate_voltage_in_positive = 0;
+//         voltage_peak = 0;
+//         last_voltage_was_high = 0;
+//         new_data = 1;
             
-#ifdef USE_LED_FOR_MAINS_SYNC
-        LED_ON;
-#endif
-#ifdef USE_LED_FOR_POSITIVE_VOLTAGE
-        LED_OFF;
-#endif            
-    }
-    else
-        integrate_voltage++;
+// #ifdef USE_LED_FOR_MAINS_SYNC
+//         LED_ON;
+// #endif
+// #ifdef USE_LED_FOR_POSITIVE_VOLTAGE
+//         LED_OFF;
+// #endif            
+//     }
+//     else
+//         integrate_voltage++;
 
-#ifdef USE_LED_FOR_MAINS_SYNC
-    if (LED)
-    {
-        if (integrate_voltage > (last_voltage_cycle >> 1))
-            LED_OFF;
-    }
-#endif
+// #ifdef USE_LED_FOR_MAINS_SYNC
+//     if (LED)
+//     {
+//         if (integrate_voltage > (last_voltage_cycle >> 1))
+//             LED_OFF;
+//     }
+// #endif
         
-    return new_data;
-}
+//     return new_data;
+// }
 
 //a 48KHZ
 //480 puntos -> ciclo; 188 puntos -> parte positiva

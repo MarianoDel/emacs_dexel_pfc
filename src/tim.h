@@ -20,9 +20,11 @@
 #define DUTY_NONE		0
 #define DUTY_5_PERCENT		50
 #define DUTY_10_PERCENT		100
-#define DUTY_FOR_DMAX           (DUTY_50_PERCENT)
+#define DUTY_FOR_DMAX           (DUTY_80_PERCENT)
+#define DUTY_20_PERCENT		200
 #define DUTY_50_PERCENT		500
 #define DUTY_50_PERCENT_PLUS_ONE    (DUTY_50_PERCENT + 1)
+#define DUTY_80_PERCENT		800
 #define DUTY_100_PERCENT        1000
 #define DUTY_ALWAYS        (DUTY_100_PERCENT + 1)
 #elif (defined USE_FREQ_70KHZ)
@@ -93,6 +95,7 @@
 
 #define CTRL_MOSFET(X)     Update_TIM3_CH1(X)
 #define CTRL_LED(X)    Update_TIM1_CH3(X)
+#define CTRL_MOSFET_COMP(X)    CTRL_MOSFET(DUTY_100_PERCENT - (X))
 
 //--- Exported functions ---//
 
