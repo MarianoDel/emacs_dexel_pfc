@@ -171,7 +171,7 @@ void TIM_3_Init (void)
     TIM3->SMCR = 0x0000;    //
     TIM3->CCMR1 = 0x0060;            //CH1 output PWM mode 1 (channel active TIM3->CNT < TIM3->CCR1)
     TIM3->CCMR2 = 0x0000;
-    TIM3->CCER |= TIM_CCER_CC1E;    //CH1 enable on pin active high
+    TIM3->CCER |= TIM_CCER_CC1E | TIM_CCER_CC1P;    //CH1 enable on pin active low
 
     TIM3->ARR = DUTY_100_PERCENT;
     TIM3->CNT = 0;

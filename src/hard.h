@@ -14,7 +14,7 @@
 //--- Hardware Board Version -------------------------------
 #define VER_1_0    //version original
 
-#define VOUT_SETPOINT    VOUT_200V
+#define VOUT_SETPOINT    VOUT_100V
 #define I_SETPOINT    IOUT_3A
 
 #define VBIAS_HIGH    VBIAS_25V
@@ -44,19 +44,19 @@
 
 // SOFTWARE Features -------------------------
 //-- Types of programs ----------
-#define DRIVER_MODE
+// #define DRIVER_MODE
 // #define HARD_TEST_MODE
 // #define HARD_TEST_MODE_LINE_SYNC
 // #define HARD_TEST_MODE_CONDUCTION_ANGLE
 // #define HARD_TEST_MODE_RECT_SINUSOIDAL
 // #define HARD_TEST_MODE_DISABLE_PWM
-// #define HARD_TEST_MODE_ADC_SENSE
+#define HARD_TEST_MODE_ADC_SENSE
 
 //-- Types of led indications ----------
-#define USE_LED_FOR_MAIN_STATES
+// #define USE_LED_FOR_MAIN_STATES
 // #define USE_LED_FOR_MAINS_SYNC
 // #define USE_LED_FOR_POSITIVE_VOLTAGE
-// #define USE_LED_AS_TIM1_CH3
+#define USE_LED_AS_TIM1_CH3
 // #define USE_LED_FOR_SIGNAL
 
 //-- Frequency selection ----------

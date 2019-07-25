@@ -157,7 +157,7 @@ int main(void)
     // TIM_17_Init();    //with int, tick: 1us
     MA32Circular_Reset();
     
-    CTRL_MOSFET_COMP(DUTY_NONE);
+    CTRL_MOSFET(DUTY_NONE);
     
     //ADC and DMA configuration
     AdcConfig();
@@ -167,7 +167,7 @@ int main(void)
     //end of ADC & DMA
 
 #ifdef HARD_TEST_MODE_DISABLE_PWM
-    CTRL_MOSFET_COMP(DUTY_NONE);
+    CTRL_MOSFET(DUTY_10_PERCENT);
     while (1);
 #endif
     
@@ -194,14 +194,14 @@ int main(void)
                     LED_ON;
 #endif
             }
-            CTRL_MOSFET_COMP(*p_signal);
+            CTRL_MOSFET(*p_signal);
         }
     }
 #endif    // HARD_TEST_MODE_RECT_SINUSOIDAL
 
 #ifdef HARD_TEST_MODE_ADC_SENSE
     //disable pwm
-    CTRL_MOSFET_COMP(DUTY_NONE);
+    CTRL_MOSFET(DUTY_NONE);
     
     while (1)
     {
@@ -209,7 +209,8 @@ int main(void)
         {
             sequence_ready_reset;
             // CTRL_LED(Vout_Sense);
-            CTRL_LED(Vline_Sense);
+            // CTRL_LED(Vline_Sense);
+            CTRL_LED(I_Sense);
         }
     }
 #endif
@@ -276,7 +277,7 @@ int main(void)
     
     //--- Production Program ----------
 #ifdef DRIVER_MODE
-    CTRL_MOSFET_COMP(DUTY_NONE);
+    CTRL_MOSFET(DUTY_NONE);
     
     while (1)
     {
@@ -305,7 +306,7 @@ int main(void)
                         if (d < DUTY_FOR_DMAX)
                         {
                             d++;
-                            CTRL_MOSFET_COMP(d);
+                            CTRL_MOSFET(d);
                         }
                         else
                         {
@@ -323,7 +324,7 @@ int main(void)
             break;
 
         case AUTO_RESTART:
-            CTRL_MOSFET_COMP(DUTY_NONE);
+            CTRL_MOSFET(DUTY_NONE);
             d = 0;
             ez1 = 0;
             ez2 = 0;
@@ -345,7 +346,7 @@ int main(void)
                 else
                     d = DUTY_NONE;
 
-                CTRL_MOSFET_COMP(d);
+                CTRL_MOSFET(d);
             }
             break;
             
