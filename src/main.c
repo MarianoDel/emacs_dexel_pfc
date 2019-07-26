@@ -119,6 +119,7 @@ int main(void)
     driver_states_t driver_state = AUTO_RESTART;
     unsigned char soft_start_cnt = 0;
     unsigned char undersampling = 0;
+    unsigned char calc_filters = 0;
     short d = 0;
     short ez1 = 0;
     short ez2 = 0;
@@ -278,16 +279,22 @@ int main(void)
     
     //--- Production Program ----------
 #ifdef DRIVER_MODE
+    MA8Circular_Vout_Reset();
+    MA8Circular_Vline_Reset();
+
     CTRL_MOSFET(DUTY_NONE);
-    
+
     while (1)
     {
         switch (driver_state)
         {
         case POWER_UP:
             if (Vline_Sense > VLINE_START_THRESHOLD)
+            {
+                MA8Circular_Vout_Reset();
+                MA8Circular_Vline_Reset();                
                 driver_state = SOFT_START;
-            
+            }
             break;
 
         case SOFT_START:
@@ -295,6 +302,7 @@ int main(void)
             {
                 sequence_ready_reset;
                 soft_start_cnt++;
+                calc_filters = 1;
 
                 //reviso no pasarme de tension
                 if (Vout_Sense < VOUT_SETPOINT)
@@ -338,6 +346,7 @@ int main(void)
             {
                 unsigned int current_calc = 0;
                 sequence_ready_reset;
+                calc_filters = 1;
                 
                 //reviso no pasarme de corriente
                 //no quiero mas de 1V en la corriente
@@ -353,6 +362,8 @@ int main(void)
                     else
                     {
                         d = DUTY_NONE;
+                        LEDR_ON;
+                        timer_standby = 10;
                         driver_state = PEAK_OVERCURRENT;
                     }
                 }
@@ -381,6 +392,7 @@ int main(void)
         case OUTPUT_OVERVOLTAGE:
             if (!timer_standby)
             {
+                LEDG_OFF;
                 if (Vout_Sense < VOUT_MIN_THRESHOLD)
                     driver_state = AUTO_RESTART;
             }
@@ -394,6 +406,7 @@ int main(void)
         case INPUT_BROWNOUT:
             if (!timer_standby)
             {
+                LEDG_OFF;
                 if (Vline_Sense > VLINE_START_THRESHOLD)
                     driver_state = AUTO_RESTART;
             }
@@ -402,6 +415,7 @@ int main(void)
         case PEAK_OVERCURRENT:
             if (!timer_standby)
             {
+                LEDR_OFF;
                 driver_state = AUTO_RESTART;
             }
             break;
@@ -419,19 +433,25 @@ int main(void)
         }
 
         //Cosas que no tienen tanto que ver con las muestras o el estado del programa
-        // Hard_Update_Voltage_Sense();
-        if (Vout_Sense > VOUT_MAX_THRESHOLD)
+        //TODO: ojo que si no esoty dentro de casos no tengo calc_filters MEJORAR!!!!
+        if (calc_filters)
         {
-            CTRL_MOSFET(DUTY_NONE);
-            driver_state = OUTPUT_OVERVOLTAGE;
-            timer_standby = 20;
-        }
+            calc_filters = 0;
+            if (MA8Circular_Vout(Vout_Sense) > VOUT_MAX_THRESHOLD)
+            {
+                CTRL_MOSFET(DUTY_NONE);
+                driver_state = OUTPUT_OVERVOLTAGE;
+                timer_standby = 10;
+                LEDG_ON;
+            }
 
-        if (Vline_Sense < VLINE_STOP_THRESHOLD)
-        {
-            CTRL_MOSFET(DUTY_NONE);
-            driver_state = INPUT_BROWNOUT;
-            timer_standby = 20;
+            if (MA8Circular_Vline(Vline_Sense) < VLINE_STOP_THRESHOLD)
+            {
+                CTRL_MOSFET(DUTY_NONE);
+                driver_state = INPUT_BROWNOUT;
+                timer_standby = 20;
+                LEDG_ON;
+            }
         }
 
 #ifdef USE_LED_FOR_MAIN_STATES

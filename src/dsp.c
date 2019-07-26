@@ -30,10 +30,24 @@ short d_last = 0;
 #endif
 
 #ifdef USE_MA8_CIRCULAR
+//vout filter
+unsigned short v_ma8_vout [8];
+unsigned short * p_ma8_vout;
+unsigned int total_ma8_vout = 0;
+//vline filter
+unsigned short v_ma8_vline [8];
+unsigned short * p_ma8_vline;
+unsigned int total_ma8_vline = 0;
+//general
 unsigned short v_ma8 [8];
 unsigned short * p_ma8;
 unsigned int total_ma8 = 0;
 #endif
+// #ifdef USE_MA8_CIRCULAR
+// unsigned short v_ma8 [8];
+// unsigned short * p_ma8;
+// unsigned int total_ma8 = 0;
+// #endif
 #ifdef USE_MA32_CIRCULAR
 unsigned short v_ma_circular [32];
 unsigned short * p_ma_circular;
@@ -87,18 +101,12 @@ unsigned short RandomGen (unsigned int seed)
 }
 
 #ifdef USE_MA32_CIRCULAR
-//seteo de punteros del filtro circular
-void MA32Circular_Start (void)
-{
-    p_ma_circular = &v_ma_circular[0];
-}
-
 //reset de punteros al filtro circular
 void MA32Circular_Reset (void)
 {
     unsigned char i;
     
-    MA32Circular_Start();
+    p_ma_circular = &v_ma_circular[0];
     for (i = 0; i < 32; i++)
         v_ma_circular[i] = 0;
 }
@@ -134,6 +142,28 @@ unsigned short MA32Circular_Calc (void)
 
 #ifdef USE_MA8_CIRCULAR
 //reset de punteros al filtro circular
+void MA8Circular_Vout_Reset (void)
+{
+    unsigned char i;
+
+    for (i = 0; i < 8; i++)
+        v_ma8_vout[i] = 0;
+
+    p_ma8_vout = &v_ma8_vout[0];
+    total_ma8_vout = 0;
+}
+
+void MA8Circular_Vline_Reset (void)
+{
+    unsigned char i;
+
+    for (i = 0; i < 8; i++)
+        v_ma8_vline[i] = 0;
+
+    p_ma8_vline = &v_ma8_vline[0];
+    total_ma8_vline = 0;
+}
+
 void MA8Circular_Reset (void)
 {
     unsigned char i;
@@ -149,6 +179,34 @@ void MA8Circular_Reset (void)
 //MA8Circular_Reset() vacia el filtro
 //recibe: new_sample
 //contesta: resultado
+unsigned short MA8Circular_Vout (unsigned short new_sample)
+{
+    total_ma8_vout -= *p_ma8_vout;
+    total_ma8_vout += new_sample;
+    *p_ma8_vout = new_sample;
+
+    if (p_ma8_vout < (v_ma8_vout + 7))
+        p_ma8_vout += 1;
+    else
+        p_ma8_vout = &v_ma8_vout[0];
+
+    return (unsigned short) (total_ma8_vout >> 3);
+}
+
+unsigned short MA8Circular_Vline (unsigned short new_sample)
+{
+    total_ma8_vline -= *p_ma8_vline;
+    total_ma8_vline += new_sample;
+    *p_ma8_vline = new_sample;
+
+    if (p_ma8_vline < (v_ma8_vline + 7))
+        p_ma8_vline += 1;
+    else
+        p_ma8_vline = &v_ma8_vline[0];
+
+    return (unsigned short) (total_ma8_vline >> 3);
+}
+
 unsigned short MA8Circular (unsigned short new_sample)
 {
     total_ma8 -= *p_ma8;

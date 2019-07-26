@@ -41,6 +41,10 @@ void PID_update_constants (unsigned short, unsigned short, unsigned short);
 #ifdef USE_MA8_CIRCULAR
 void MA8Circular_Reset (void);
 unsigned short MA8Circular (unsigned short);
+void MA8Circular_Vline_Reset (void);
+unsigned short MA8Circular_Vline (unsigned short);
+void MA8Circular_Vout_Reset (void);
+unsigned short MA8Circular_Vout (unsigned short);
 void MA8Circular_Only_Load (unsigned short);
 unsigned short MA8Circular_Only_Calc (void);
 #endif
