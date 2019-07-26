@@ -105,7 +105,7 @@ void TimingDelay_Decrement (void);
 // extern void EXTI4_15_IRQHandler(void);
 
 
-
+#define UNDERSAMPLING_TICKS    10
 //-------------------------------------------//
 // @brief  Main program.
 // @param  None
@@ -118,6 +118,7 @@ int main(void)
 
     driver_states_t driver_state = AUTO_RESTART;
     unsigned char soft_start_cnt = 0;
+    unsigned char undersampling = 0;
     short d = 0;
     short ez1 = 0;
     short ez2 = 0;
@@ -335,16 +336,43 @@ int main(void)
         case VOLTAGE_MODE:
             if (sequence_ready)
             {
+                unsigned int current_calc = 0;
                 sequence_ready_reset;
+                
+                //reviso no pasarme de corriente
+                //no quiero mas de 1V en la corriente
+                //1V / 3.3V * 1023 = 310
+                //esto por el ciclo de trabajo me da el promedio de corriente que mido
+                current_calc = I_Sense * 1000;
+                current_calc = current_calc / d;
 
-                d = PID_roof (VOUT_SETPOINT, Vout_Sense, d, &ez1, &ez2);
-                if (d > 0)    //d puede tomar valores negativos
+                if (current_calc > 610) 
                 {
-                    if (d > DUTY_FOR_DMAX)
-                        d = DUTY_FOR_DMAX;
+                    if (d > 10)
+                        d -= 10;
+                    else
+                    {
+                        d = DUTY_NONE;
+                        driver_state = PEAK_OVERCURRENT;
+                    }
                 }
                 else
-                    d = DUTY_NONE;
+                {
+                    if (undersampling > UNDERSAMPLING_TICKS)
+                    {
+                        undersampling = 0;
+                        d = PID_roof (VOUT_SETPOINT, Vout_Sense, d, &ez1, &ez2);
+                        if (d > 0)    //d puede tomar valores negativos
+                        {
+                            if (d > DUTY_FOR_DMAX)
+                                d = DUTY_FOR_DMAX;
+                        }
+                        else
+                            d = DUTY_NONE;
+                    }
+                    else
+                        undersampling++;
+                }
 
                 CTRL_MOSFET(d);
             }
@@ -362,10 +390,20 @@ int main(void)
             if (!timer_standby)
                 driver_state = AUTO_RESTART;                
             break;
-            
-        case OVERCURRENT:
+
+        case INPUT_BROWNOUT:
             if (!timer_standby)
-                driver_state = AUTO_RESTART;                
+            {
+                if (Vline_Sense > VLINE_START_THRESHOLD)
+                    driver_state = AUTO_RESTART;
+            }
+            break;
+            
+        case PEAK_OVERCURRENT:
+            if (!timer_standby)
+            {
+                driver_state = AUTO_RESTART;
+            }
             break;
 
         case BIAS_OVERVOLTAGE:
@@ -386,6 +424,13 @@ int main(void)
         {
             CTRL_MOSFET(DUTY_NONE);
             driver_state = OUTPUT_OVERVOLTAGE;
+            timer_standby = 20;
+        }
+
+        if (Vline_Sense < VLINE_STOP_THRESHOLD)
+        {
+            CTRL_MOSFET(DUTY_NONE);
+            driver_state = INPUT_BROWNOUT;
             timer_standby = 20;
         }
 

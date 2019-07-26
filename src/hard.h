@@ -21,7 +21,8 @@
 #define VBIAS_LOW     VBIAS_08V
 #define VBIAS_START   VBIAS_10V
 
-#define VLINE_START_THRESHOLD    VLINE_20V
+#define VLINE_START_THRESHOLD    VLINE_120V
+#define VLINE_STOP_THRESHOLD    VLINE_80V
 #define VOUT_MAX_THRESHOLD    VOUT_240V
 #define VOUT_MIN_THRESHOLD    VOUT_160V
 
@@ -117,6 +118,11 @@
 #define VOUT_350V    805
 #define VOUT_400V    920    
 
+#define VLINE_20V    55
+#define VLINE_80V    221
+#define VLINE_120V   330
+
+    
 #if defined OPTO_KB817
 #define IOUT_3A    610
 #define IOUT_2A    406    //esto da 2.24A en frio 8-7-19
@@ -129,10 +135,6 @@
 #else
 #error "define the opto in hard.h"
 #endif
-
-#define VLINE_20V    55
-
-
 
 #if (defined USE_FREQ_70KHZ)
 #define SOFT_START_CNT_ROOF    140
@@ -157,8 +159,16 @@
 //GPIOA pin7    
 //GPIOB pin0    
 //GPIOB pin1	
-//GPIOA pin8	
-//GPIOA pin9    NC
+
+//GPIOA pin8
+#define LEDR ((GPIOA->ODR & 0x0100) != 0)
+#define LEDR_ON	GPIOA->BSRR = 0x00000100
+#define LEDR_OFF GPIOA->BSRR = 0x01000000
+
+//GPIOA pin9
+#define LEDG ((GPIOA->ODR & 0x0200) != 0)
+#define LEDG_ON	GPIOA->BSRR = 0x00000200
+#define LEDG_OFF GPIOA->BSRR = 0x02000000
 
 //GPIOA pin10	LED
 #define LED ((GPIOA->ODR & 0x0400) != 0)
@@ -190,7 +200,8 @@ typedef enum
     CURRENT_MODE,
     OUTPUT_OVERVOLTAGE,
     INPUT_OVERVOLTAGE,
-    OVERCURRENT,
+    INPUT_BROWNOUT,
+    PEAK_OVERCURRENT,
     BIAS_OVERVOLTAGE,
     AUTO_RESTART,
     POWER_DOWN

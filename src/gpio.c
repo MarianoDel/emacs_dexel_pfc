@@ -63,13 +63,13 @@ void GPIO_Config (void)
 
 #ifdef USE_LED_AS_TIM1_CH3
     temp = GPIOA->MODER;	//2 bits por pin
-    temp &= 0xFFCFCC00;		//PA0 - PA4 analog input; PA6 alternative (TIM3 CH1)
-    temp |= 0x002023FF;		//PA10 alternative (TIM1 CH3)
+    temp &= 0xFFC0CC00;		//PA0 - PA4 analog input; PA6 alternative (TIM3 CH1)
+    temp |= 0x002523FF;		//PA8 PA9 output; PA10 alternative (TIM1 CH3)
     GPIOA->MODER = temp;
 #else
     temp = GPIOA->MODER;	//2 bits por pin
-    temp &= 0xFFCFCC00;		//PA0 - PA4 analog input; PA6 alternative (TIM3 CH1)
-    temp |= 0x001023FF;		//PA10 output
+    temp &= 0xFFC0CC00;		//PA0 - PA4 analog input; PA6 alternative (TIM3 CH1)
+    temp |= 0x001523FF;		//PA8 - PA10 output
     GPIOA->MODER = temp;    
 #endif
     temp = GPIOA->OTYPER;	//1 bit por pin
