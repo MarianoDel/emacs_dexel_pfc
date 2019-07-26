@@ -352,7 +352,10 @@ int main(void)
             
         case OUTPUT_OVERVOLTAGE:
             if (!timer_standby)
-                driver_state = AUTO_RESTART;
+            {
+                if (Vout_Sense < VOUT_MIN_THRESHOLD)
+                    driver_state = AUTO_RESTART;
+            }
             break;
 
         case INPUT_OVERVOLTAGE:
@@ -379,7 +382,13 @@ int main(void)
 
         //Cosas que no tienen tanto que ver con las muestras o el estado del programa
         // Hard_Update_Voltage_Sense();
-        
+        if (Vout_Sense > VOUT_MAX_THRESHOLD)
+        {
+            CTRL_MOSFET(DUTY_NONE);
+            driver_state = OUTPUT_OVERVOLTAGE;
+            timer_standby = 20;
+        }
+
 #ifdef USE_LED_FOR_MAIN_STATES
         UpdateLed();
 #endif

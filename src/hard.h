@@ -14,7 +14,7 @@
 //--- Hardware Board Version -------------------------------
 #define VER_1_0    //version original
 
-#define VOUT_SETPOINT    VOUT_100V
+#define VOUT_SETPOINT    VOUT_200V
 #define I_SETPOINT    IOUT_3A
 
 #define VBIAS_HIGH    VBIAS_25V
@@ -22,8 +22,8 @@
 #define VBIAS_START   VBIAS_10V
 
 #define VLINE_START_THRESHOLD    VLINE_20V
-// #define VOUT_MAX_THRESHOLD    VOUT_200V
-// #define VOUT_MIN_THRESHOLD    VOUT_200V
+#define VOUT_MAX_THRESHOLD    VOUT_240V
+#define VOUT_MIN_THRESHOLD    VOUT_160V
 
 
 //--- Configuration for Hardware Versions ------------------
@@ -44,19 +44,19 @@
 
 // SOFTWARE Features -------------------------
 //-- Types of programs ----------
-// #define DRIVER_MODE
+#define DRIVER_MODE
 // #define HARD_TEST_MODE
 // #define HARD_TEST_MODE_LINE_SYNC
 // #define HARD_TEST_MODE_CONDUCTION_ANGLE
 // #define HARD_TEST_MODE_RECT_SINUSOIDAL
 // #define HARD_TEST_MODE_DISABLE_PWM
-#define HARD_TEST_MODE_ADC_SENSE
+// #define HARD_TEST_MODE_ADC_SENSE
 
 //-- Types of led indications ----------
-// #define USE_LED_FOR_MAIN_STATES
+#define USE_LED_FOR_MAIN_STATES
 // #define USE_LED_FOR_MAINS_SYNC
 // #define USE_LED_FOR_POSITIVE_VOLTAGE
-#define USE_LED_AS_TIM1_CH3
+// #define USE_LED_AS_TIM1_CH3
 // #define USE_LED_FOR_SIGNAL
 
 //-- Frequency selection ----------
@@ -110,7 +110,9 @@
 //bias @12V 1.14V -> 346  ;;medido 5-7-19
 
 #define VOUT_100V    230
+#define VOUT_160V    368
 #define VOUT_200V    460
+#define VOUT_240V    552
 #define VOUT_300V    692
 #define VOUT_350V    805
 #define VOUT_400V    920    
