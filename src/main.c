@@ -105,7 +105,7 @@ void TimingDelay_Decrement (void);
 // extern void EXTI4_15_IRQHandler(void);
 
 
-#define UNDERSAMPLING_TICKS    10
+#define UNDERSAMPLING_TICKS    9    //10 - 1
 //-------------------------------------------//
 // @brief  Main program.
 // @param  None
@@ -375,8 +375,19 @@ int main(void)
                 {
                     if (undersampling > UNDERSAMPLING_TICKS)
                     {
-                        undersampling = 0;
+#ifdef DRIVER_MODE_VOUT_BOOSTED
+                        unsigned short boost_setpoint = 0;
+
+                        //40% boosted
+                        boost_setpoint = Hard_Get_Vline_Peak() * 14;
+                        boost_setpoint = boost_setpoint / 10;
+                        
+                        d = PID_roof (boost_setpoint, Vout_Sense, d, &ez1, &ez2);
+#endif
+#ifdef DRIVER_MODE_VOUT_FIXED                        
                         d = PID_roof (VOUT_SETPOINT, Vout_Sense, d, &ez1, &ez2);
+#endif
+                        undersampling = 0;
                         if (d > 0)    //d puede tomar valores negativos
                         {
                             if (d > DUTY_FOR_DMAX)
@@ -434,6 +445,12 @@ int main(void)
                 break;
 
             }
+
+            //
+            //The things that are directly attached to the samples period
+            //
+            Hard_Update_Vline(Vline_Sense_Filtered);
+
         }
 
         //

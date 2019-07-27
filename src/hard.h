@@ -23,6 +23,7 @@
 
 #define VLINE_START_THRESHOLD    V_120V
 #define VLINE_STOP_THRESHOLD    V_80V
+#define VLINE_ZERO_THRESHOLD    V_10V
 #define VOUT_MAX_THRESHOLD    V_350V
 #define VOUT_MIN_THRESHOLD    V_160V
 
@@ -45,7 +46,8 @@
 
 // SOFTWARE Features -------------------------
 //-- Types of programs ----------
-#define DRIVER_MODE
+// #define DRIVER_MODE_VOUT_FIXED
+#define DRIVER_MODE_VOUT_BOOSTED
 // #define HARD_TEST_MODE
 // #define HARD_TEST_MODE_LINE_SYNC
 // #define HARD_TEST_MODE_CONDUCTION_ANGLE
@@ -98,6 +100,12 @@
 #define INVERTER_MODE
 #endif
 #endif
+
+#if (defined DRIVER_MODE_VOUT_FIXED) || (defined DRIVER_MODE_VOUT_BOOSTED)
+#ifndef DRIVER_MODE
+#define DRIVER_MODE
+#endif
+#endif
 //-------- Hysteresis Conf ------------------------
 
 //-------- PWM Conf ------------------------
@@ -113,6 +121,7 @@
 //input voltage and otput voltage witth the same divider; modif date 27-7-19
 //resist divider 33k//27k and 1M + 1M
 //divider: 135.7
+#define V_10V    23
 #define V_80V    182
 #define V_100V    228
 #define V_120V    274
@@ -252,9 +261,8 @@ unsigned short VinTicksToVoltage (unsigned short);
 unsigned short Hard_GetDmaxLout (unsigned short, unsigned short);
 void WelcomeCodeFeatures (char *);
 
-void Hard_Reset_Voltage_Filter (void);
-unsigned char Hard_Update_Voltage_Sense (void);
-unsigned char Hard_Get_Conduction_Angle (void);
-unsigned short Hard_Get_Hidden_Value (void);
+void Hard_Update_Vline (unsigned short);
+unsigned short Hard_Get_Vline_Peak (void);
+unsigned char Hard_Get_Vline_Conduction_Angle (void);
 
 #endif /* _HARD_H_ */

@@ -26,19 +26,24 @@ extern volatile unsigned short adc_ch[];
 
 
 /* Global variables ------------------------------------------------------------*/
-//para el led
+//for LED indicator
 led_state_t led_state = START_BLINKING;
 unsigned char blink = 0;
 unsigned char how_many_blinks = 0;
-//para los filtros de tension y snchro
-unsigned char hard_filter_index = 0;
-unsigned char last_voltage_was_high = 0;
-unsigned short integrate_voltage = 0;
-unsigned short integrate_voltage_in_positive = 0;
-unsigned short last_voltage_cycle = 0;
-unsigned short last_voltage_cycle_in_positive = 0;
-unsigned short last_voltage_peak = 0;
-unsigned short voltage_peak = 0;
+//for voltage and synchro
+// unsigned char hard_filter_index = 0;
+// unsigned char last_voltage_was_high = 0;
+// unsigned short integrate_voltage = 0;
+// unsigned short integrate_voltage_in_positive = 0;
+// unsigned short last_voltage_cycle = 0;
+// unsigned short last_voltage_cycle_in_positive = 0;
+// unsigned short last_voltage_peak = 0;
+unsigned char current_vline_cnt = 0;
+unsigned short current_vline_peak = 0;
+unsigned short current_vline_ones = 0;
+unsigned short last_vline_peak = 0;
+unsigned short last_vline_ones = 0;
+// unsigned short voltage_peak = 0;
 
 #define STRING2(x) #x
 #define STRING(x) STRING2(x)
@@ -321,92 +326,62 @@ void WelcomeCodeFeatures (char * str)
     
 }
 
-
-void Hard_Reset_Voltage_Filter (void)
+//this is called from main on each sample
+//24KHz or 23.3KHz
+//on 100Hz -> 233 pts or 240 pts
+void Hard_Update_Vline (unsigned short new_sample)
 {
-    MA8Circular_Reset();
+    //search for vline_peak
+    if (new_sample > current_vline_peak)
+        current_vline_peak = new_sample;
+
+    //search for conduction angle
+    if (new_sample > VLINE_ZERO_THRESHOLD)
+        current_vline_ones++;
+    
+    if (current_vline_cnt < 240)
+        current_vline_cnt++;
+    else
+    {
+        last_vline_peak = current_vline_peak;
+        last_vline_ones = current_vline_ones;
+        
+        current_vline_peak = 0;
+        current_vline_ones = 0;
+        current_vline_cnt = 0;
+    }
 }
 
-// unsigned char Hard_Update_Voltage_Sense (void)
-// {
-//     unsigned char new_data = 0;
-//     unsigned short voltage = 0;
-    
-//     voltage = MA8Circular(Vline_Sense);
+unsigned short Hard_Get_Vline_Peak (void)
+{
+    return last_vline_peak;
+}
 
-// // #ifdef USE_LED_AS_TIM1_CH3
-// //     CTRL_LED(voltage);
-// // #endif
-//     if (voltage > VOLTAGE_MAX_THRESHOLD)
-//     {
-//         last_voltage_was_high = 1;
-//         integrate_voltage++;
-//         integrate_voltage_in_positive++;
-
-//         //busco el pico de tension
-//         if (voltage > voltage_peak)
-//             voltage_peak = voltage;
-
-// #ifdef USE_LED_FOR_POSITIVE_VOLTAGE
-//         LED_ON;
-// #endif
-//     }
-//     else if ((voltage < VOLTAGE_MIN_THRESHOLD) && (last_voltage_was_high))
-//     {
-//         //flanco descendente
-//         last_voltage_cycle = integrate_voltage;
-//         last_voltage_cycle_in_positive = integrate_voltage_in_positive;
-//         last_voltage_peak = voltage_peak;
-//         integrate_voltage = 1;
-//         integrate_voltage_in_positive = 0;
-//         voltage_peak = 0;
-//         last_voltage_was_high = 0;
-//         new_data = 1;
-            
-// #ifdef USE_LED_FOR_MAINS_SYNC
-//         LED_ON;
-// #endif
-// #ifdef USE_LED_FOR_POSITIVE_VOLTAGE
-//         LED_OFF;
-// #endif            
-//     }
-//     else
-//         integrate_voltage++;
-
-// #ifdef USE_LED_FOR_MAINS_SYNC
-//     if (LED)
-//     {
-//         if (integrate_voltage > (last_voltage_cycle >> 1))
-//             LED_OFF;
-//     }
-// #endif
-        
-//     return new_data;
-// }
-
-//a 48KHZ
-//480 puntos -> ciclo; 188 puntos -> parte positiva
-//TODO: comprobar como funciona con 70KHz
-//TODO: revisar que a minima tension de alimentacion 180Vac? siga contestando 180
-unsigned char Hard_Get_Conduction_Angle (void)
+//answer between 0 and 180, check if its better 0 to 255
+unsigned char Hard_Get_Vline_Conduction_Angle (void)
 {
     unsigned int temp = 0;
 
-    //tengo que multipicar por 1.27 para ajustar 188 a 240
-    //ademas multiplicar por 360 para saber el angulo de conduccion
-    temp = last_voltage_cycle_in_positive * 460;
-    temp = temp / last_voltage_cycle;
+#ifdef USE_FREQ_48KHZ
+    temp = last_vline_ones * 180;
+    temp = temp / 240;
+#endif
+
+#ifdef USE_FREQ_70KHZ
+    temp = last_vline_ones * 180;
+    temp = temp / 233;
+#endif
+
     if (temp > 180)
         temp = 180;
 
-    // return 180;
     return (unsigned char) temp;
 }
 
-unsigned short Hard_Get_Hidden_Value (void)
-{
-    return last_voltage_cycle;
-    // return last_voltage_cycle_in_positive;
-}
+// unsigned short Hard_Get_Hidden_Value (void)
+// {
+//     return last_voltage_cycle;
+//     // return last_voltage_cycle_in_positive;
+// }
 
 //---- end of file ----//
