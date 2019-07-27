@@ -14,17 +14,17 @@
 //--- Hardware Board Version -------------------------------
 #define VER_1_0    //version original
 
-#define VOUT_SETPOINT    VOUT_200V
+#define VOUT_SETPOINT    V_200V
 #define I_SETPOINT    IOUT_3A
 
 #define VBIAS_HIGH    VBIAS_25V
 #define VBIAS_LOW     VBIAS_08V
 #define VBIAS_START   VBIAS_10V
 
-#define VLINE_START_THRESHOLD    VLINE_120V
-#define VLINE_STOP_THRESHOLD    VLINE_80V
-#define VOUT_MAX_THRESHOLD    VOUT_350V
-#define VOUT_MIN_THRESHOLD    VOUT_160V
+#define VLINE_START_THRESHOLD    V_120V
+#define VLINE_STOP_THRESHOLD    V_80V
+#define VOUT_MAX_THRESHOLD    V_350V
+#define VOUT_MIN_THRESHOLD    V_160V
 
 
 //--- Configuration for Hardware Versions ------------------
@@ -110,17 +110,18 @@
 #define VBIAS_08V    223
 //bias @12V 1.14V -> 346  ;;medido 5-7-19
 
-#define VOUT_100V    230
-#define VOUT_160V    368
-#define VOUT_200V    460
-#define VOUT_240V    552
-#define VOUT_300V    692
-#define VOUT_350V    805
-#define VOUT_400V    920    
-
-#define VLINE_20V    55
-#define VLINE_80V    221
-#define VLINE_120V   330
+//input voltage and otput voltage witth the same divider; modif date 27-7-19
+//resist divider 33k//27k and 1M + 1M
+//divider: 135.7
+#define V_80V    182
+#define V_100V    228
+#define V_120V    274
+#define V_160V    365
+#define V_200V    457
+#define V_240V    548
+#define V_300V    685
+#define V_350V    799
+#define V_400V    914    
 
     
 #if defined OPTO_KB817
