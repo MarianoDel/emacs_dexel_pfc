@@ -119,7 +119,12 @@ int main(void)
     driver_states_t driver_state = AUTO_RESTART;
     unsigned char soft_start_cnt = 0;
     unsigned char undersampling = 0;
-    unsigned char calc_filters = 0;
+
+    unsigned short Vout_Sense_Filtered = 0;
+    unsigned short Vline_Sense_Filtered = 0;
+    // unsigned short I_Sense_Filtered = 0;
+    unsigned int current_calc = 0;
+
     short d = 0;
     short ez1 = 0;
     short ez2 = 0;
@@ -286,26 +291,29 @@ int main(void)
 
     while (1)
     {
-        switch (driver_state)
+        //the most work involved is sample by sample
+        if (sequence_ready)
         {
-        case POWER_UP:
-            if (Vline_Sense > VLINE_START_THRESHOLD)
-            {
-                MA8Circular_Vout_Reset();
-                MA8Circular_Vline_Reset();                
-                driver_state = SOFT_START;
-            }
-            break;
+            sequence_ready_reset;
 
-        case SOFT_START:
-            if (sequence_ready)
+            //filters
+            Vline_Sense_Filtered = MA8Circular_Vline(Vline_Sense);
+            Vout_Sense_Filtered = MA8Circular_Vout(Vout_Sense);
+            // I_Sense_Filtered = MA8Circular_I(I_Sense);
+            
+            switch (driver_state)
             {
-                sequence_ready_reset;
+            case POWER_UP:
+                if (Vline_Sense_Filtered > VLINE_START_THRESHOLD)
+                    driver_state = SOFT_START;
+
+                break;
+
+            case SOFT_START:
                 soft_start_cnt++;
-                calc_filters = 1;
-
-                //reviso no pasarme de tension
-                if (Vout_Sense < VOUT_SETPOINT)
+                
+                //check to not go overvoltage
+                if (Vout_Sense_Filtered < VOUT_SETPOINT)
                 {
                     //hago un soft start respecto de la corriente y/o tension de salida
                     if (soft_start_cnt > SOFT_START_CNT_ROOF)    //update cada 2ms aprox.
@@ -329,33 +337,27 @@ int main(void)
                     ChangeLed(LED_VOLTAGE_MODE);
                     driver_state = VOLTAGE_MODE;
                 }
-            }
-            break;
+                break;
 
-        case AUTO_RESTART:
-            CTRL_MOSFET(DUTY_NONE);
-            d = 0;
-            ez1 = 0;
-            ez2 = 0;
-            ChangeLed(LED_STANDBY);
-            driver_state = POWER_UP;
-            break;
+            case AUTO_RESTART:
+                CTRL_MOSFET(DUTY_NONE);
+                d = 0;
+                ez1 = 0;
+                ez2 = 0;
+                ChangeLed(LED_STANDBY);
+                driver_state = POWER_UP;
+                break;
         
-        case VOLTAGE_MODE:
-            if (sequence_ready)
-            {
-                unsigned int current_calc = 0;
-                sequence_ready_reset;
-                calc_filters = 1;
-                
+            case VOLTAGE_MODE:
                 //reviso no pasarme de corriente
                 //no quiero mas de 1V en la corriente
                 //1V / 3.3V * 1023 = 310
                 //esto por el ciclo de trabajo me da el promedio de corriente que mido
-                current_calc = I_Sense * 1000;
-                current_calc = current_calc / d;
+                // current_calc = I_Sense * 1000;
+                // current_calc = current_calc / d;
 
-                if (current_calc > 610) 
+                // if (current_calc > 610)
+                if (I_Sense > 85)
                 {
                     if (d > 10)
                         d -= 10;
@@ -366,6 +368,8 @@ int main(void)
                         timer_standby = 10;
                         driver_state = PEAK_OVERCURRENT;
                     }
+
+                    CTRL_MOSFET(d);
                 }
                 else
                 {
@@ -380,85 +384,83 @@ int main(void)
                         }
                         else
                             d = DUTY_NONE;
+
+                        CTRL_MOSFET(d);
                     }
                     else
                         undersampling++;
                 }
-
-                CTRL_MOSFET(d);
-            }
-            break;
+                break;
             
-        case OUTPUT_OVERVOLTAGE:
-            if (!timer_standby)
-            {
-                LEDG_OFF;
-                if (Vout_Sense < VOUT_MIN_THRESHOLD)
-                    driver_state = AUTO_RESTART;
-            }
-            break;
+            case OUTPUT_OVERVOLTAGE:
+                if (!timer_standby)
+                {
+                    LEDG_OFF;
+                    if (Vout_Sense_Filtered < VOUT_MIN_THRESHOLD)
+                        driver_state = AUTO_RESTART;
+                }
+                break;
 
-        case INPUT_OVERVOLTAGE:
-            if (!timer_standby)
-                driver_state = AUTO_RESTART;                
-            break;
+            case INPUT_OVERVOLTAGE:
+                if (!timer_standby)
+                    driver_state = AUTO_RESTART;                
+                break;
 
-        case INPUT_BROWNOUT:
-            if (!timer_standby)
-            {
-                LEDG_OFF;
-                if (Vline_Sense > VLINE_START_THRESHOLD)
-                    driver_state = AUTO_RESTART;
-            }
-            break;
+            case INPUT_BROWNOUT:
+                if (!timer_standby)
+                {
+                    LEDG_OFF;
+                    if (Vline_Sense_Filtered > VLINE_START_THRESHOLD)
+                        driver_state = AUTO_RESTART;
+                }
+                break;
             
-        case PEAK_OVERCURRENT:
-            if (!timer_standby)
-            {
-                LEDR_OFF;
-                driver_state = AUTO_RESTART;
+            case PEAK_OVERCURRENT:
+                if (!timer_standby)
+                {
+                    LEDR_OFF;
+                    driver_state = AUTO_RESTART;
+                }
+                break;
+
+            case BIAS_OVERVOLTAGE:
+                if (!timer_standby)
+                    driver_state = AUTO_RESTART;                
+                break;            
+
+            case POWER_DOWN:
+                if (!timer_standby)
+                    driver_state = AUTO_RESTART;                
+                break;
+
             }
-            break;
-
-        case BIAS_OVERVOLTAGE:
-            if (!timer_standby)
-                driver_state = AUTO_RESTART;                
-            break;            
-
-        case POWER_DOWN:
-            if (!timer_standby)
-                driver_state = AUTO_RESTART;                
-            break;
-
         }
 
-        //Cosas que no tienen tanto que ver con las muestras o el estado del programa
-        //TODO: ojo que si no esoty dentro de casos no tengo calc_filters MEJORAR!!!!
-        if (calc_filters)
+        //
+        //The things that are not directly attached to the samples period
+        //
+        if (Vout_Sense_Filtered > VOUT_MAX_THRESHOLD)
         {
-            calc_filters = 0;
-            if (MA8Circular_Vout(Vout_Sense) > VOUT_MAX_THRESHOLD)
-            {
-                CTRL_MOSFET(DUTY_NONE);
-                driver_state = OUTPUT_OVERVOLTAGE;
-                timer_standby = 10;
-                LEDG_ON;
-            }
+            CTRL_MOSFET(DUTY_NONE);
+            driver_state = OUTPUT_OVERVOLTAGE;
+            timer_standby = 10;
+            LEDG_ON;
+        }
 
-            if (MA8Circular_Vline(Vline_Sense) < VLINE_STOP_THRESHOLD)
-            {
-                CTRL_MOSFET(DUTY_NONE);
-                driver_state = INPUT_BROWNOUT;
-                timer_standby = 20;
-                LEDG_ON;
-            }
+        if ((Vline_Sense_Filtered < VLINE_STOP_THRESHOLD) &&
+            (driver_state > POWER_UP))
+        {
+            CTRL_MOSFET(DUTY_NONE);
+            driver_state = INPUT_BROWNOUT;
+            timer_standby = 20;
+            LEDG_ON;
         }
 
 #ifdef USE_LED_FOR_MAIN_STATES
         UpdateLed();
 #endif
         
-    }
+    }    //end while 1
     
 #endif    // DRIVER_MODE
     

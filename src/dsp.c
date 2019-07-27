@@ -67,7 +67,7 @@ unsigned short * p_ma_circular;
 //usan divisor por 128, ajusta en 35.6V, este con carga ajusta mejor 34.3 a 35.6
 #define KPV    5    //kp_dig = 0.039
 // #define KIV    3    //ki_dig = 0.023, ajusta pero tiene bastante error 42pts
-#define KIV    64    //ki_dig = 0.023, ajusta pero tiene bastante error 42pts
+#define KIV    128    //ki_dig = 0.023, ajusta pero tiene bastante error 42pts
 #define KDV    0
 
 //estos funcionan bastante bien para tension en vacio, prende apaga alrededor de 80V
