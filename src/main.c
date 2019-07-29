@@ -52,13 +52,10 @@ volatile unsigned short timer_led = 0;
 
 // Globals -------------------------------------------------
 volatile unsigned char overcurrent_shutdown = 0;
-// volatile short d = 0;
-// short ez1 = 0;
-// short ez2 = 0;
-// // unsigned short dmax = 0;
-// unsigned short last_d = 0;
-// #define DELTA_D    2
-
+//  for the filters
+ma8_data_obj_t vline_data_filter;
+ma8_data_obj_t vout_data_filter;
+ma8_data_obj_t vline_peak_data_filter;
 
 // ------- de los timers -------
 volatile unsigned short wait_ms_var = 0;
@@ -284,8 +281,10 @@ int main(void)
     
     //--- Production Program ----------
 #ifdef DRIVER_MODE
-    MA8Circular_Vout_Reset();
-    MA8Circular_Vline_Reset();
+    //start the circular filters
+    MA8Circular_Reset(&vline_data_filter);
+    MA8Circular_Reset(&vline_peak_data_filter);
+    MA8Circular_Reset(&vout_data_filter);
 
     CTRL_MOSFET(DUTY_NONE);
 
@@ -297,8 +296,8 @@ int main(void)
             sequence_ready_reset;
 
             //filters
-            Vline_Sense_Filtered = MA8Circular_Vline(Vline_Sense);
-            Vout_Sense_Filtered = MA8Circular_Vout(Vout_Sense);
+            Vline_Sense_Filtered = MA8Circular(&vline_data_filter, Vline_Sense);
+            Vout_Sense_Filtered = MA8Circular(&vout_data_filter, Vout_Sense);
             // I_Sense_Filtered = MA8Circular_I(I_Sense);
             
             switch (driver_state)

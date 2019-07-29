@@ -357,6 +357,11 @@ unsigned short Hard_Get_Vline_Peak (void)
     return last_vline_peak;
 }
 
+unsigned short Hard_Get_Vline_Peak_Average (void)
+{
+    return last_vline_peak;
+}
+
 //answer between 0 and 180, check if its better 0 to 255
 unsigned char Hard_Get_Vline_Conduction_Angle (void)
 {

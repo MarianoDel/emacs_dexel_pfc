@@ -21,6 +21,11 @@
 //--- Exported constants ------------------------
 
 //--- Exported types ----------------------------
+typedef struct {
+    unsigned short v_ma8[8];
+    unsigned short * p_ma8;
+    unsigned int total_ma8;
+} ma8_data_obj_t;
 
 //--- Module Functions --------------------------
 unsigned short RandomGen (unsigned int);
@@ -39,15 +44,10 @@ void PID_update_constants (unsigned short, unsigned short, unsigned short);
 #endif
 
 #ifdef USE_MA8_CIRCULAR
-void MA8Circular_Reset (void);
-unsigned short MA8Circular (unsigned short);
-void MA8Circular_Vline_Reset (void);
-unsigned short MA8Circular_Vline (unsigned short);
-void MA8Circular_Vout_Reset (void);
-unsigned short MA8Circular_Vout (unsigned short);
-void MA8Circular_Only_Load (unsigned short);
-unsigned short MA8Circular_Only_Calc (void);
+void MA8Circular_Reset (ma8_data_obj_t *);
+unsigned short MA8Circular (ma8_data_obj_t *, unsigned short);
 #endif
+
 #ifdef USE_MA32_CIRCULAR
 void MA32Circular_Start (void);
 void MA32Circular_Reset (void);

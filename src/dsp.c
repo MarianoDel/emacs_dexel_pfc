@@ -141,103 +141,40 @@ unsigned short MA32Circular_Calc (void)
 #endif
 
 #ifdef USE_MA8_CIRCULAR
-//reset de punteros al filtro circular
-void MA8Circular_Vout_Reset (void)
+//set de punteros y vaciado del filtro
+//recibe:
+// puntero a estructura de datos del filtro "ma8_data_obj_t *"
+void MA8Circular_Reset (ma8_data_obj_t * p_data)
 {
     unsigned char i;
-
+    
     for (i = 0; i < 8; i++)
-        v_ma8_vout[i] = 0;
+        p_data->v_ma8[i] = 0;
 
-    p_ma8_vout = &v_ma8_vout[0];
-    total_ma8_vout = 0;
+    p_data->p_ma8 = p_data->v_ma8;
+    p_data->total_ma8 = 0;
 }
 
-void MA8Circular_Vline_Reset (void)
+//Filtro circular, necesito activar previamente con MA8Circular_Reset()
+//recibe:
+// puntero a estructura de datos del filtro "ma8_data_obj_t *"
+// nueva mustra "new_sample"
+//contesta:
+// resultado del filtro
+unsigned short MA8Circular (ma8_data_obj_t *p_data, unsigned short new_sample)
 {
-    unsigned char i;
+    p_data->total_ma8 -= *(p_data->p_ma8);
+    p_data->total_ma8 += new_sample;
+    *(p_data->p_ma8) = new_sample;
 
-    for (i = 0; i < 8; i++)
-        v_ma8_vline[i] = 0;
-
-    p_ma8_vline = &v_ma8_vline[0];
-    total_ma8_vline = 0;
-}
-
-void MA8Circular_Reset (void)
-{
-    unsigned char i;
-
-    for (i = 0; i < 8; i++)
-        v_ma8[i] = 0;
-
-    p_ma8 = &v_ma8[0];
-    total_ma8 = 0;
-}
-
-//Filtro circular, necesito activar previamente con MA8Circular_Start()
-//MA8Circular_Reset() vacia el filtro
-//recibe: new_sample
-//contesta: resultado
-unsigned short MA8Circular_Vout (unsigned short new_sample)
-{
-    total_ma8_vout -= *p_ma8_vout;
-    total_ma8_vout += new_sample;
-    *p_ma8_vout = new_sample;
-
-    if (p_ma8_vout < (v_ma8_vout + 7))
-        p_ma8_vout += 1;
+    if (p_data->p_ma8 < ((p_data->v_ma8) + 7))
+        p_data->p_ma8 += 1;
     else
-        p_ma8_vout = &v_ma8_vout[0];
+        p_data->p_ma8 = p_data->v_ma8;
 
-    return (unsigned short) (total_ma8_vout >> 3);
+    return (unsigned short) (p_data->total_ma8 >> 3);    
 }
 
-unsigned short MA8Circular_Vline (unsigned short new_sample)
-{
-    total_ma8_vline -= *p_ma8_vline;
-    total_ma8_vline += new_sample;
-    *p_ma8_vline = new_sample;
-
-    if (p_ma8_vline < (v_ma8_vline + 7))
-        p_ma8_vline += 1;
-    else
-        p_ma8_vline = &v_ma8_vline[0];
-
-    return (unsigned short) (total_ma8_vline >> 3);
-}
-
-unsigned short MA8Circular (unsigned short new_sample)
-{
-    total_ma8 -= *p_ma8;
-    total_ma8 += new_sample;
-    *p_ma8 = new_sample;
-
-    if (p_ma8 < (v_ma8 + 7))
-        p_ma8 += 1;
-    else
-        p_ma8 = &v_ma8[0];
-
-    return (unsigned short) (total_ma8 >> 3);
-}
-
-void MA8Circular_Only_Load (unsigned short new_sample)
-{
-    *p_ma8 = new_sample;
-
-    if (p_ma8 < (v_ma8 + 7))
-        p_ma8 += 1;
-    else
-        p_ma8 = &v_ma8[0];
-}
-
-unsigned short MA8Circular_Only_Calc (void)
-{
-    unsigned int total_ma;
-
-    total_ma = v_ma8[0] + v_ma8[1] + v_ma8[2] + v_ma8[3] + v_ma8[4] + v_ma8[5] + v_ma8[6] + v_ma8[7];
-    return (unsigned short) (total_ma >> 3);
-}
 #endif
 
 unsigned short MAFilterFast (unsigned short new_sample, unsigned short * vsample)
