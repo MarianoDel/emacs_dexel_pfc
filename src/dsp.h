@@ -46,6 +46,7 @@ void PID_update_constants (unsigned short, unsigned short, unsigned short);
 #ifdef USE_MA8_CIRCULAR
 void MA8Circular_Reset (ma8_data_obj_t *);
 unsigned short MA8Circular (ma8_data_obj_t *, unsigned short);
+unsigned short MA8Circular_Only_Calc (ma8_data_obj_t *);
 #endif
 
 #ifdef USE_MA32_CIRCULAR

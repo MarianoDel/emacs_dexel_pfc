@@ -378,10 +378,12 @@ int main(void)
                         unsigned short boost_setpoint = 0;
 
                         //40% boosted
-                        boost_setpoint = Hard_Get_Vline_Peak() * 14;
+                        boost_setpoint = MA8Circular_Only_Calc(&vline_data_filter);
+                        boost_setpoint = boost_setpoint * 14;
                         boost_setpoint = boost_setpoint / 10;
-                        
-                        d = PID_roof (boost_setpoint, Vout_Sense, d, &ez1, &ez2);
+
+                        if (boost_setpoint > Vout_Sense)
+                            d = PID_roof (boost_setpoint, Vout_Sense, d, &ez1, &ez2);
 #endif
 #ifdef DRIVER_MODE_VOUT_FIXED                        
                         d = PID_roof (VOUT_SETPOINT, Vout_Sense, d, &ez1, &ez2);
@@ -448,8 +450,13 @@ int main(void)
             //
             //The things that are directly attached to the samples period
             //
-            Hard_Update_Vline(Vline_Sense_Filtered);
-
+            if (Hard_Update_Vline(Vline_Sense_Filtered))
+            {
+                //cycle_ended
+                LEDG_ON;
+                MA8Circular(&vline_data_filter, Hard_Get_Vline_Peak());
+                LEDG_OFF;
+            }
         }
 
         //

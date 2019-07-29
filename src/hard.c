@@ -329,8 +329,10 @@ void WelcomeCodeFeatures (char * str)
 //this is called from main on each sample
 //24KHz or 23.3KHz
 //on 100Hz -> 233 pts or 240 pts
-void Hard_Update_Vline (unsigned short new_sample)
+unsigned char Hard_Update_Vline (unsigned short new_sample)
 {
+    unsigned char cycle_ended = 0;
+    
     //search for vline_peak
     if (new_sample > current_vline_peak)
         current_vline_peak = new_sample;
@@ -349,15 +351,13 @@ void Hard_Update_Vline (unsigned short new_sample)
         current_vline_peak = 0;
         current_vline_ones = 0;
         current_vline_cnt = 0;
+        cycle_ended = 1;
     }
+
+    return cycle_ended;
 }
 
 unsigned short Hard_Get_Vline_Peak (void)
-{
-    return last_vline_peak;
-}
-
-unsigned short Hard_Get_Vline_Peak_Average (void)
 {
     return last_vline_peak;
 }

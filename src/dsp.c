@@ -175,6 +175,11 @@ unsigned short MA8Circular (ma8_data_obj_t *p_data, unsigned short new_sample)
     return (unsigned short) (p_data->total_ma8 >> 3);    
 }
 
+unsigned short MA8Circular_Only_Calc (ma8_data_obj_t *p_data)
+{
+    return (unsigned short) (p_data->total_ma8 >> 3);    
+}
+
 #endif
 
 unsigned short MAFilterFast (unsigned short new_sample, unsigned short * vsample)

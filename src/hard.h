@@ -261,7 +261,7 @@ unsigned short VinTicksToVoltage (unsigned short);
 unsigned short Hard_GetDmaxLout (unsigned short, unsigned short);
 void WelcomeCodeFeatures (char *);
 
-void Hard_Update_Vline (unsigned short);
+unsigned char Hard_Update_Vline (unsigned short);
 unsigned short Hard_Get_Vline_Peak (void);
 unsigned char Hard_Get_Vline_Conduction_Angle (void);
 
