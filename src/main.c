@@ -102,7 +102,7 @@ void TimingDelay_Decrement (void);
 // extern void EXTI4_15_IRQHandler(void);
 
 
-#define UNDERSAMPLING_TICKS    9    //10 - 1
+#define UNDERSAMPLING_TICKS    99    //100 - 1
 //-------------------------------------------//
 // @brief  Main program.
 // @param  None
@@ -120,7 +120,6 @@ int main(void)
     unsigned short Vout_Sense_Filtered = 0;
     unsigned short Vline_Sense_Filtered = 0;
     // unsigned short I_Sense_Filtered = 0;
-    unsigned int current_calc = 0;
 
     short d = 0;
     short ez1 = 0;
@@ -356,19 +355,29 @@ int main(void)
                 // current_calc = current_calc / d;
 
                 // if (current_calc > 610)
-                if (I_Sense > 85)
+                //if current is extreamly high, just stop
+                if (I_Sense > CURRENT_EXTREAMLY_HIGH)
                 {
-                    if (d > 10)
-                        d -= 10;
-                    else
+                    d = DUTY_NONE;
+                    CTRL_MOSFET(d);                    
+                    LEDR_ON;
+                    timer_standby = 10;
+                    driver_state = PEAK_OVERCURRENT;
+                }
+                else if (I_Sense > CURRENT_ABOVE_EXPECTED)
+                {
+                    d = PID_roof(I_SETPOINT, I_Sense, d, &ez1, &ez2);
+
+                    if (d > 0)    //d puede tomar valores negativos
                     {
-                        d = DUTY_NONE;
-                        LEDR_ON;
-                        timer_standby = 10;
-                        driver_state = PEAK_OVERCURRENT;
+                        if (d > DUTY_FOR_DMAX)
+                            d = DUTY_FOR_DMAX;
                     }
+                    else
+                        d = DUTY_NONE;
 
                     CTRL_MOSFET(d);
+
                 }
                 else
                 {
@@ -401,6 +410,7 @@ int main(void)
                     }
                     else
                         undersampling++;
+
                 }
                 break;
             
@@ -453,11 +463,9 @@ int main(void)
             if (Hard_Update_Vline(Vline_Sense_Filtered))
             {
                 //cycle_ended
-                LEDG_ON;
                 MA8Circular(&vline_data_filter, Hard_Get_Vline_Peak());
-                LEDG_OFF;
             }
-        }
+        }    //end if sequence
 
         //
         //The things that are not directly attached to the samples period
@@ -470,14 +478,14 @@ int main(void)
             LEDG_ON;
         }
 
-        if ((Vline_Sense_Filtered < VLINE_STOP_THRESHOLD) &&
-            (driver_state > POWER_UP))
-        {
-            CTRL_MOSFET(DUTY_NONE);
-            driver_state = INPUT_BROWNOUT;
-            timer_standby = 20;
-            LEDG_ON;
-        }
+        // if ((Vline_Sense_Filtered < VLINE_STOP_THRESHOLD) &&
+        //     (driver_state > POWER_UP))
+        // {
+        //     CTRL_MOSFET(DUTY_NONE);
+        //     driver_state = INPUT_BROWNOUT;
+        //     timer_standby = 20;
+        //     LEDG_ON;
+        // }
 
 #ifdef USE_LED_FOR_MAIN_STATES
         UpdateLed();

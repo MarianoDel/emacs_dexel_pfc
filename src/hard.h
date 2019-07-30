@@ -15,7 +15,9 @@
 #define VER_1_0    //version original
 
 #define VOUT_SETPOINT    V_200V
-#define I_SETPOINT    IOUT_3A
+#define I_SETPOINT    CURRENT_ABOVE_EXPECTED
+#define CURRENT_ABOVE_EXPECTED    60
+#define CURRENT_EXTREAMLY_HIGH    90
 
 #define VBIAS_HIGH    VBIAS_25V
 #define VBIAS_LOW     VBIAS_08V
@@ -24,8 +26,8 @@
 #define VLINE_START_THRESHOLD    V_120V
 #define VLINE_STOP_THRESHOLD    V_80V
 #define VLINE_ZERO_THRESHOLD    V_10V
-#define VOUT_MAX_THRESHOLD    V_350V
-#define VOUT_MIN_THRESHOLD    V_160V
+#define VOUT_MAX_THRESHOLD    V_450V
+#define VOUT_MIN_THRESHOLD    V_240V    //debiera ser la maxima tensio que permito en vline
 
 
 //--- Configuration for Hardware Versions ------------------
@@ -130,7 +132,8 @@
 #define V_240V    548
 #define V_300V    685
 #define V_350V    799
-#define V_400V    914    
+#define V_400V    914
+#define V_450V    1004
 
     
 #if defined OPTO_KB817

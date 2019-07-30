@@ -109,3 +109,9 @@
    |-----------+-------------------------------------------|
    | 30V 2.38A | 260mV; 480mV (trapecio); Ton 6us T 15.6us |
    
+** Tiempo de vuelta Voltage Mode - 30-7-19
+   - tiempo de proceso luego de sequence_ready (boost mode): 
+     sin generar tipico 5.04us, cada tanto 6.96us
+     generando tipico 7.6us 11.8us cada tanto
+
+   - las secuencias largas debe ser por el modo undersampling
