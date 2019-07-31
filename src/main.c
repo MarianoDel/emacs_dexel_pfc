@@ -119,7 +119,7 @@ int main(void)
     driver_states_t driver_state = AUTO_RESTART;
     unsigned char soft_start_cnt = 0;
     unsigned char undersampling = 0;
-    unsigned short pfc_multiplier = 512;
+    unsigned short pfc_multiplier = 0;
 
     unsigned short Vout_Sense_Filtered = 0;
     unsigned short Vline_Sense_Filtered = 0;
@@ -406,7 +406,6 @@ int main(void)
 
                 if (undersampling > UNDERSAMPLING_TICKS)
                 {
-#ifdef DRIVER_MODE_VOUT_BOOSTED
                     unsigned short boost_setpoint = 0;
 
                     //40% boosted
@@ -418,22 +417,8 @@ int main(void)
                     {
                         voltage_pid.setpoint = boost_setpoint;
                         voltage_pid.sample = Vout_Sense;
-                        d = PID(&voltage_pid);
+                        pfc_multiplier = PID(&voltage_pid);
                     }
-#endif
-#ifdef DRIVER_MODE_VOUT_FIXED                        
-                    d = PID_roof (VOUT_SETPOINT, Vout_Sense, d, &ez1, &ez2);
-#endif
-                    undersampling = 0;
-                    if (d > 0)    //d puede tomar valores negativos
-                    {
-                        if (d > DUTY_FOR_DMAX)
-                            d = DUTY_FOR_DMAX;
-                    }
-                    else
-                        d = DUTY_NONE;
-
-                    CTRL_MOSFET(d);
                 }
                 else
                     undersampling++;
