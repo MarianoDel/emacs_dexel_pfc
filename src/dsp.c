@@ -318,37 +318,52 @@ unsigned short MAFilter32Circular (unsigned short new_sample, unsigned short * p
 }
 
 #ifdef USE_PID_CONTROLLERS
-short PID (short setpoint, short sample)
+short PID (pid_data_obj_t * p)
 {
     short error = 0;
     short d = 0;
 
+    unsigned short k1 = 0;
+    unsigned short k2 = 0;
+    unsigned short k3 = 0;
+    
     short val_k1 = 0;
     short val_k2 = 0;
     short val_k3 = 0;
 
-    error = setpoint - sample;
+    k1 = p->kp + p->ki + p->kd;
+    k2 = p->kp + p->kd + p->kd;
+    k3 = p->kd;
+    
+    error = p->setpoint - p->sample;
 
     //K1
-    acc = K1V * error;		//5500 / 32768 = 0.167 errores de hasta 6 puntos
+    acc = k1 * error;
     val_k1 = acc >> PID_CONSTANT_DIVIDER;
 
     //K2
-    acc = K2V * error_z1;		//K2 = no llega pruebo con 1
-    val_k2 = acc >> PID_CONSTANT_DIVIDER;    //si es mas grande que K1 + K3 no lo deja arrancar
+    acc = k2 * p->error_z1;
+    val_k2 = acc >> PID_CONSTANT_DIVIDER;
 
     //K3
-    acc = K3V * error_z2;		//K3 = 0.4
+    acc = k3 * p->error_z2;
     val_k3 = acc >> PID_CONSTANT_DIVIDER;
 
-    d = d_last + val_k1 - val_k2 + val_k3;
+    d = p->last_d + val_k1 - val_k2 + val_k3;
 
-    //Update variables PID
-    error_z2 = error_z1;
-    error_z1 = error;
-    d_last = d;
+    //Update PID variables
+    p->error_z2 = p->error_z1;
+    p->error_z1 = error;
+    p->last_d = d;
 
     return d;
+}
+
+void PID_Flush_Errors (pid_data_obj_t * p)
+{
+    p->last_d = 0;
+    p->error_z1 = 0;
+    p->error_z2 = 0;
 }
 
 #if (defined USE_PID_UPDATED_CONSTANTS)

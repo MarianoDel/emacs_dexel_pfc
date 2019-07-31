@@ -27,6 +27,17 @@ typedef struct {
     unsigned int total_ma8;
 } ma8_data_obj_t;
 
+typedef struct {
+    short setpoint;
+    short sample;
+    short last_d;
+    short error_z1;
+    short error_z2;
+    unsigned short kp;
+    unsigned short ki;
+    unsigned short kd;
+} pid_data_obj_t;
+
 //--- Module Functions --------------------------
 unsigned short RandomGen (unsigned int);
 unsigned char MAFilter (unsigned char, unsigned char *);
@@ -38,7 +49,8 @@ unsigned short MAFilter32Fast (unsigned short *);
 unsigned short MAFilter32Circular (unsigned short, unsigned short *, unsigned char *, unsigned int *);
 
 #ifdef USE_PID_CONTROLLERS
-short PID (short, short);
+short PID (pid_data_obj_t *);
+void PID_Flush_Errors (pid_data_obj_t *);
 short PID_roof (short, short, short, short *, short *);
 void PID_update_constants (unsigned short, unsigned short, unsigned short);
 #endif

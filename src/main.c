@@ -56,6 +56,9 @@ volatile unsigned char overcurrent_shutdown = 0;
 ma8_data_obj_t vline_data_filter;
 ma8_data_obj_t vout_data_filter;
 ma8_data_obj_t vline_peak_data_filter;
+//  for the pid controllers
+pid_data_obj_t current_pid;
+pid_data_obj_t voltage_pid;
 
 // ------- de los timers -------
 volatile unsigned short wait_ms_var = 0;
@@ -116,14 +119,15 @@ int main(void)
     driver_states_t driver_state = AUTO_RESTART;
     unsigned char soft_start_cnt = 0;
     unsigned char undersampling = 0;
+    unsigned short pfc_multiplier = 512;
 
     unsigned short Vout_Sense_Filtered = 0;
     unsigned short Vline_Sense_Filtered = 0;
     // unsigned short I_Sense_Filtered = 0;
 
     short d = 0;
-    short ez1 = 0;
-    short ez2 = 0;
+    // short ez1 = 0;
+    // short ez2 = 0;
 
 
     //GPIO Configuration.
@@ -285,6 +289,18 @@ int main(void)
     MA8Circular_Reset(&vline_peak_data_filter);
     MA8Circular_Reset(&vout_data_filter);
 
+    //start the pid data for controllers
+    PID_Flush_Errors(&current_pid);
+    current_pid.kp = 3;
+    current_pid.ki = 5;
+    current_pid.kd = 0;
+
+    PID_Flush_Errors(&voltage_pid);
+    voltage_pid.kp = 0;
+    voltage_pid.ki = 128;
+    voltage_pid.kd = 0;
+    
+
     CTRL_MOSFET(DUTY_NONE);
 
     while (1)
@@ -340,8 +356,8 @@ int main(void)
             case AUTO_RESTART:
                 CTRL_MOSFET(DUTY_NONE);
                 d = 0;
-                ez1 = 0;
-                ez2 = 0;
+                PID_Flush_Errors(&current_pid);
+                PID_Flush_Errors(&voltage_pid);
                 ChangeLed(LED_STANDBY);
                 driver_state = POWER_UP;
                 break;
@@ -364,11 +380,19 @@ int main(void)
                     timer_standby = 10;
                     driver_state = PEAK_OVERCURRENT;
                 }
-                else if (I_Sense > CURRENT_ABOVE_EXPECTED)
+                else
                 {
-                    d = PID_roof(I_SETPOINT, I_Sense, d, &ez1, &ez2);
+                    //fast current loop
+                    unsigned int current_setpoint = 0;
+                    
+                    current_setpoint = Vline_Sense * pfc_multiplier;
+                    current_setpoint >>= 10;
 
-                    if (d > 0)    //d puede tomar valores negativos
+                    current_pid.setpoint = current_setpoint;
+                    current_pid.sample = I_Sense;
+                    d = PID (&current_pid);
+
+                    if (d > 0)    //d can be negative
                     {
                         if (d > DUTY_FOR_DMAX)
                             d = DUTY_FOR_DMAX;
@@ -379,39 +403,41 @@ int main(void)
                     CTRL_MOSFET(d);
 
                 }
-                else
+
+                if (undersampling > UNDERSAMPLING_TICKS)
                 {
-                    if (undersampling > UNDERSAMPLING_TICKS)
-                    {
 #ifdef DRIVER_MODE_VOUT_BOOSTED
-                        unsigned short boost_setpoint = 0;
+                    unsigned short boost_setpoint = 0;
 
-                        //40% boosted
-                        boost_setpoint = MA8Circular_Only_Calc(&vline_data_filter);
-                        boost_setpoint = boost_setpoint * 14;
-                        boost_setpoint = boost_setpoint / 10;
+                    //40% boosted
+                    boost_setpoint = MA8Circular_Only_Calc(&vline_data_filter);
+                    boost_setpoint = boost_setpoint * 14;
+                    boost_setpoint = boost_setpoint / 10;
 
-                        if (boost_setpoint > Vout_Sense)
-                            d = PID_roof (boost_setpoint, Vout_Sense, d, &ez1, &ez2);
+                    if (boost_setpoint > Vout_Sense)
+                    {
+                        voltage_pid.setpoint = boost_setpoint;
+                        voltage_pid.sample = Vout_Sense;
+                        d = PID(&voltage_pid);
+                    }
 #endif
 #ifdef DRIVER_MODE_VOUT_FIXED                        
-                        d = PID_roof (VOUT_SETPOINT, Vout_Sense, d, &ez1, &ez2);
+                    d = PID_roof (VOUT_SETPOINT, Vout_Sense, d, &ez1, &ez2);
 #endif
-                        undersampling = 0;
-                        if (d > 0)    //d puede tomar valores negativos
-                        {
-                            if (d > DUTY_FOR_DMAX)
-                                d = DUTY_FOR_DMAX;
-                        }
-                        else
-                            d = DUTY_NONE;
-
-                        CTRL_MOSFET(d);
+                    undersampling = 0;
+                    if (d > 0)    //d puede tomar valores negativos
+                    {
+                        if (d > DUTY_FOR_DMAX)
+                            d = DUTY_FOR_DMAX;
                     }
                     else
-                        undersampling++;
+                        d = DUTY_NONE;
 
+                    CTRL_MOSFET(d);
                 }
+                else
+                    undersampling++;
+
                 break;
             
             case OUTPUT_OVERVOLTAGE:
