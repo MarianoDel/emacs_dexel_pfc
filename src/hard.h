@@ -27,7 +27,7 @@
 #define VLINE_STOP_THRESHOLD    V_80V
 #define VLINE_ZERO_THRESHOLD    V_10V
 #define VOUT_MAX_THRESHOLD    V_450V
-#define VOUT_MIN_THRESHOLD    V_240V    //debiera ser la maxima tensio que permito en vline
+#define VOUT_MIN_THRESHOLD    V_300V    //debiera ser la maxima tension que permito en vline
 
 
 //--- Configuration for Hardware Versions ------------------

@@ -105,7 +105,7 @@ void TimingDelay_Decrement (void);
 // extern void EXTI4_15_IRQHandler(void);
 
 
-#define UNDERSAMPLING_TICKS    99    //100 - 1
+#define UNDERSAMPLING_TICKS    9    //100 - 1
 //-------------------------------------------//
 // @brief  Main program.
 // @param  None
@@ -291,8 +291,8 @@ int main(void)
 
     //start the pid data for controllers
     PID_Flush_Errors(&current_pid);
-    current_pid.kp = 3;
-    current_pid.ki = 5;
+    current_pid.kp = 98;
+    current_pid.ki = 60;
     current_pid.kd = 0;
 
     PID_Flush_Errors(&voltage_pid);
@@ -319,38 +319,46 @@ int main(void)
             {
             case POWER_UP:
                 if (Vline_Sense_Filtered > VLINE_START_THRESHOLD)
+                {
                     driver_state = SOFT_START;
+                    timer_standby = 10;
+                }
 
                 break;
 
             case SOFT_START:
-                soft_start_cnt++;
+                // soft_start_cnt++;
                 
-                //check to not go overvoltage
-                if (Vout_Sense_Filtered < VOUT_SETPOINT)
-                {
-                    //hago un soft start respecto de la corriente y/o tension de salida
-                    if (soft_start_cnt > SOFT_START_CNT_ROOF)    //update cada 2ms aprox.
-                    {
-                        soft_start_cnt = 0;
+                // //check to not go overvoltage
+                // if (Vout_Sense_Filtered < VOUT_SETPOINT)
+                // {
+                //     //hago un soft start respecto de la corriente y/o tension de salida
+                //     if (soft_start_cnt > SOFT_START_CNT_ROOF)    //update cada 2ms aprox.
+                //     {
+                //         soft_start_cnt = 0;
                     
-                        if (d < DUTY_FOR_DMAX)
-                        {
-                            d++;
-                            CTRL_MOSFET(d);
-                        }
-                        else
-                        {
-                            ChangeLed(LED_VOLTAGE_MODE);
-                            driver_state = VOLTAGE_MODE;
-                        }
-                    }
-                }
-                else
+                //         if (d < DUTY_FOR_DMAX)
+                //         {
+                //             d++;
+                //             CTRL_MOSFET(d);
+                //         }
+                //         else
+                //         {
+                //             ChangeLed(LED_VOLTAGE_MODE);
+                //             driver_state = VOLTAGE_MODE;
+                //         }
+                //     }
+                // }
+                // else
+                // {
+                //     ChangeLed(LED_VOLTAGE_MODE);
+                //     driver_state = VOLTAGE_MODE;
+                // }
+                if (!timer_standby)    //doy tiempo de medio ciclo
                 {
                     ChangeLed(LED_VOLTAGE_MODE);
                     driver_state = VOLTAGE_MODE;
-                }
+                }                
                 break;
 
             case AUTO_RESTART:
@@ -383,45 +391,56 @@ int main(void)
                 else
                 {
                     //fast current loop
-                    unsigned int current_setpoint = 0;
+                    // unsigned int current_setpoint = 0;
                     
-                    current_setpoint = Vline_Sense * pfc_multiplier;
-                    current_setpoint >>= 10;
+                    // current_setpoint = Vline_Sense * pfc_multiplier;
+                    // current_setpoint >>= 10;
 
-                    current_pid.setpoint = current_setpoint;
-                    current_pid.sample = I_Sense;
-                    d = PID (&current_pid);
-
-                    if (d > 0)    //d can be negative
-                    {
-                        if (d > DUTY_FOR_DMAX)
-                            d = DUTY_FOR_DMAX;
-                    }
+                    // current_pid.setpoint = current_setpoint;
+                    // if (undersampling > UNDERSAMPLING_TICKS)
+                    // {
+#define MAX_CURRENT    500
+                    if (Vline_Sense_Filtered < MAX_CURRENT)
+                        current_pid.setpoint = Vline_Sense_Filtered;
                     else
-                        d = DUTY_NONE;
+                        current_pid.setpoint = MAX_CURRENT;
+                    
+                        current_pid.sample = I_Sense;
+                        d = PID (&current_pid);
 
-                    CTRL_MOSFET(d);
+                        if (d > 0)    //d can be negative
+                        {
+                            if (d > DUTY_FOR_DMAX)
+                                d = DUTY_FOR_DMAX;
+                        }
+                        else
+                            d = DUTY_NONE;
+
+                        CTRL_MOSFET(d);
+                    // }
+                    // else
+                    //     undersampling++;
 
                 }
 
-                if (undersampling > UNDERSAMPLING_TICKS)
-                {
-                    unsigned short boost_setpoint = 0;
+                // if (undersampling > UNDERSAMPLING_TICKS)
+                // {
+                //     unsigned short boost_setpoint = 0;
 
-                    //40% boosted
-                    boost_setpoint = MA8Circular_Only_Calc(&vline_data_filter);
-                    boost_setpoint = boost_setpoint * 14;
-                    boost_setpoint = boost_setpoint / 10;
+                //     //40% boosted
+                //     boost_setpoint = MA8Circular_Only_Calc(&vline_data_filter);
+                //     boost_setpoint = boost_setpoint * 14;
+                //     boost_setpoint = boost_setpoint / 10;
 
-                    if (boost_setpoint > Vout_Sense)
-                    {
-                        voltage_pid.setpoint = boost_setpoint;
-                        voltage_pid.sample = Vout_Sense;
-                        pfc_multiplier = PID(&voltage_pid);
-                    }
-                }
-                else
-                    undersampling++;
+                //     if (boost_setpoint > Vout_Sense)
+                //     {
+                //         voltage_pid.setpoint = boost_setpoint;
+                //         voltage_pid.sample = Vout_Sense;
+                //         pfc_multiplier = PID(&voltage_pid);
+                //     }
+                // }
+                // else
+                //     undersampling++;
 
                 break;
             
